@@ -2,6 +2,18 @@
 class Thrift::AMQP::Transport < Thrift::BaseTransport
   POLL_SLEEP = 0.01
   
+  # Connects the transport to the queue on the client side. 
+  #
+  def self.connect(exchange_name)
+    connection = Bunny.new
+    connection.start
+    
+    exchange = connection.exchange(exchange_name, :type => :headers)
+    
+    instance = new(connection, exchange)
+    instance
+  end
+  
   # Constructs a transport based on an existing connection and a message
   # exchange (of the headers type).
   #
@@ -10,11 +22,14 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
     @exchange = exchange
     
     @buffered_message = ''
-    
-    @queue = connection.queue("#{exchange.name}_#{object_id}")
+    @write_buffer = ''
   end
   
   def read(sz)
+    unless @queue
+      @queue = @connection.queue("#{@exchange.name}_#{object_id}")
+    end
+    
     # loop and pop until we have something to show 
     loop do
       if buffered_message?
@@ -26,8 +41,17 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
     end
   end
   
+  def write(buffer)
+    write_buffer << buffer
+  end
+  def flush
+    @exchange.publish(write_buffer)
+    self.write_buffer = ''
+  end
+  
 private
   attr_accessor :buffered_message
+  attr_accessor :write_buffer
   
   def buffered_message?
     not (

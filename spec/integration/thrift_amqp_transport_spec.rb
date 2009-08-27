@@ -17,11 +17,22 @@ describe "AMQP Transport Integration (oneway)" do
   end
   
   context 'with a server in the background' do
-    attr_reader :handler
+    attr_reader :handler, :client
     before(:each) do
+      # Server setup
       @handler = SpecHandler.new()
-      @processor = Test::Processor.new(handler)
+      processor = Test::Processor.new(handler)
       @server_transport = Thrift::AMQP::ServerTransport.new(EXCHANGE_NAME)
+      
+      # Client setup
+      transport = Thrift::AMQP::Transport.connect
+      protocol = Thrift::BinaryProtocol.new(transport)
+      @client = RepositoryManager::Client.new(protocol)
+
+      transport.open
+    end
+    after(:each) do
+      transport.close
     end
     
     it "should successfully send a message" do

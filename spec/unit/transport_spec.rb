@@ -44,3 +44,63 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
     end
   end
 end
+
+describe Thrift::AMQP::Transport, 'when using .connect (client)' do
+  attr_reader :bunny, :exchange
+  before(:each) do
+    @bunny = flexmock(:bunny)
+    @exchange = flexmock(:exchange)
+    
+    set_defaults(bunny, 
+      :start => nil,
+      :exchange => exchange
+    )
+    
+    flexmock(Bunny).should_receive(:new).and_return bunny
+  end
+  describe ".connect(exchange_name)" do
+    it "should create a connection to the AMQP server" do
+      bunny.should_receive(:start).once
+      
+      Thrift::AMQP::Transport.connect('exchange_name')
+    end
+    it "should access the exchange specified" do
+      bunny.should_receive(:exchange).with('exchange_name', :type => :headers).once
+      
+      Thrift::AMQP::Transport.connect('exchange_name')
+    end
+    it "should return a transport instance" do
+      transport = Thrift::AMQP::Transport.connect('exchange_name')
+      
+      transport.should be_instance_of(Thrift::AMQP::Transport)
+    end 
+  end
+
+  context 'connected' do
+    attr_reader :transport
+    before(:each) do
+      @transport = Thrift::AMQP::Transport.connect('exchange_name')
+    end
+    
+    describe "write(buffer)" do
+      it "should publish messages to the exchange" do
+        exchange.should_receive(:publish).with("some message (encoded by thrift)").once
+
+        transport.write("some message (encoded by thrift)")
+        transport.flush
+      end
+      it "should not publish on simple write" do
+        exchange.should_receive(:publish).never
+
+        transport.write("some message (encoded by thrift)")
+      end 
+      it "should publish on #flush" do
+        exchange.should_receive(:publish).with("foobar").once
+
+        transport.write("foo")
+        transport.write("bar")
+        transport.flush
+      end 
+    end
+  end
+end
