@@ -25,9 +25,13 @@ describe "AMQP Transport Integration (oneway)" do
       @server_transport = Thrift::AMQP::ServerTransport.new(EXCHANGE_NAME)
       
       # Client setup
-      transport = Thrift::AMQP::Transport.connect
-      protocol = Thrift::BinaryProtocol.new(transport)
-      @client = RepositoryManager::Client.new(protocol)
+      begin
+        transport = Thrift::AMQP::Transport.connect('exchange')
+        protocol = Thrift::BinaryProtocol.new(transport)
+        @client = RepositoryManager::Client.new(protocol)
+      rescue Bunny::ServerDownError
+        raise "Could not connect - is your local RabbitMQ running?"
+      end
 
       transport.open
     end
