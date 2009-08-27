@@ -12,6 +12,7 @@ describe "AMQP Transport Integration (oneway)" do
       @message = []
     end
     def sendMessage(message)
+      p :received
       @messages << messages
     end
   end
@@ -21,14 +22,14 @@ describe "AMQP Transport Integration (oneway)" do
     before(:each) do
       # Server setup
       @handler = SpecHandler.new()
-      processor = Test::Processor.new(handler)
+      @processor = Test::Processor.new(handler)
       @server_transport = Thrift::AMQP::ServerTransport.new(EXCHANGE_NAME)
       
       # Client setup
       begin
         transport = Thrift::AMQP::Transport.connect('exchange')
         protocol = Thrift::BinaryProtocol.new(transport)
-        @client = RepositoryManager::Client.new(protocol)
+        @client = Test::Client.new(protocol)
       rescue Bunny::ServerDownError
         raise "Could not connect - is your local RabbitMQ running?"
       end
@@ -39,8 +40,26 @@ describe "AMQP Transport Integration (oneway)" do
       transport.close
     end
     
+    # Spins the server and makes it read the next +times+ messages.
+    #
+    def spin_server(times)
+      begin
+        @server_transport.listen
+        client = @server_transport.accept
+        prot = Thrift::BinaryProtocol.new(client)
+
+        while times > 0
+          @processor.process(prot, prot)
+          times -= 1
+        end
+      ensure
+        @server_transport.close
+      end
+    end
+    
     it "should successfully send a message" do
       client.sendMessage("a message")
+      spin_server 1
       
       handler.messages.should include('a message')
     end 
@@ -48,6 +67,7 @@ describe "AMQP Transport Integration (oneway)" do
       10.times do |i|
         client.sendMessage("a message (#{i})")
       end
+      spin_server 10
       
       handler.messages.should have(10).messages
     end 

@@ -38,7 +38,7 @@ describe Thrift::AMQP::ServerTransport do
         transport.listen
       end 
       it "should create an exchange of type headers" do
-        bunny.should_receive(:exchange).with('exchange', :type => :headers).once
+        bunny.should_receive(:exchange).with('exchange', Hash).once
         
         transport.listen
       end 

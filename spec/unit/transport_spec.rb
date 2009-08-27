@@ -53,8 +53,10 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
     
     set_defaults(bunny, 
       :start => nil,
-      :exchange => exchange
-    )
+      :exchange => exchange)
+    
+    set_defaults(exchange, 
+      :name => 'exchange')
     
     flexmock(Bunny).should_receive(:new).and_return bunny
   end
@@ -65,7 +67,7 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
       Thrift::AMQP::Transport.connect('exchange_name')
     end
     it "should access the exchange specified" do
-      bunny.should_receive(:exchange).with('exchange_name', :type => :headers).once
+      bunny.should_receive(:exchange).with('exchange_name').once
       
       Thrift::AMQP::Transport.connect('exchange_name')
     end
@@ -73,6 +75,13 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
       transport = Thrift::AMQP::Transport.connect('exchange_name')
       
       transport.should be_instance_of(Thrift::AMQP::Transport)
+    end 
+    it "should raise a nice error when exchange can't be created" do
+      bunny.should_receive(:exchange).and_raise(Bunny::ProtocolError)
+
+      lambda {
+        transport = Thrift::AMQP::Transport.connect('exchange_name')
+      }.should raise_error()
     end 
   end
 
