@@ -18,6 +18,7 @@ class Thrift::AMQP::ServerTransport
   end
 
   def accept
+    Thrift::AMQP::Transport.new(@connection, @exchange)
   end  
   
   def close

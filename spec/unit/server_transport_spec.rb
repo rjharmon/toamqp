@@ -10,18 +10,19 @@ describe Thrift::AMQP::ServerTransport do
   
   context '#new(exchange)' do
     attr_reader :transport
-    attr_reader :bunny, :queue
+    attr_reader :bunny, :queue, :exchange
 
     before(:each) do
       @transport = Thrift::AMQP::ServerTransport.new('exchange')
 
       # Stub Bunny subsystem
       @bunny = flexmock(:bunny)
+      @exchange = flexmock(:exchange, :name => 'exchange')
       @queue = flexmock(:queue)
       
       set_defaults(bunny, 
         :start => nil, 
-        :exchange => :exchange, 
+        :exchange => exchange, 
         :queue => queue)
 
       set_defaults(queue, 
