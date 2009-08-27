@@ -9,7 +9,8 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
     connection.start
     
     exchange = begin
-      connection.exchange(exchange_name)
+      connection.exchange(exchange_name, 
+        :type => :fanout)     # TODO move all this code to ONE location
     rescue Bunny::ProtocolError
       raise "Could not create exchange #{@exchange_name}, maybe it exists (with different params)?"
     end
@@ -31,7 +32,8 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
   
   def read(sz)
     unless @queue
-      @queue = @connection.queue(@exchange.name)
+      @queue = @connection.queue(@exchange.name, 
+        :auto_delete => true)
       
       @queue.bind(@exchange)
     end
@@ -39,23 +41,18 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
     # loop and pop until we have something to show 
     loop do
       if buffered_message?
-        p [:read_returning, sz]
         return buffered_message.slice!(0,sz) || ''
       end
       
-      p [:pop]
       self.buffered_message = @queue.pop
-      p [:message, buffered_message]
       sleep POLL_SLEEP unless buffered_message?
     end
   end
   
   def write(buffer)
-    p [:write, buffer]
     write_buffer << buffer
   end
   def flush
-    p [:flush]
     @exchange.publish(write_buffer)
     self.write_buffer = ''
   end

@@ -16,7 +16,7 @@ class Thrift::AMQP::ServerTransport
     # Create an exchange called +exchange_name+. 
     begin 
       @exchange = @connection.exchange(@exchange_name, 
-        :type => :headers, 
+        :type => :fanout, 
         :auto_delete => true)
     rescue Bunny::ProtocolError
       raise "Could not create exchange #{@exchange_name}, maybe it exists?"
