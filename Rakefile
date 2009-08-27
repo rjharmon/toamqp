@@ -20,4 +20,13 @@ Spec::Rake::SpecTask.new('spec:integration') do |t|
   t.warning = true
 end
 
+compile_integration = file 'spec/integration/gen-rb/test.rb' => %w(spec/integration/test.thrift) do
+  rm_rf 'spec/integration/gen-rb' rescue nil
+  sh %Q{thrift --gen rb -o spec/integration spec/integration/test.thrift }
+end
+
+desc "Compiles thrift IDL definitions into Ruby code."
+task :thrift => compile_integration
+
+
 task :default => "spec:integration"
