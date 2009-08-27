@@ -1,0 +1,1 @@
+lib/thrift_amqp_transport.rb

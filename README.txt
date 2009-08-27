@@ -1,15 +1,15 @@
-h1. Thrift AMQP transport
+= Thrift AMQP transport
 
-h2. DESCRIPTION
+== DESCRIPTION
 
 Transports thrift messages over a the advanced message queue protocol. (AMQP)
 This is an early release that features only one-way communication. 
 
-h2. SYNOPSIS
+== SYNOPSIS
 
 ... coming soon
 
-h2. SPECIFICATION
+== SPECIFICATION
 
 To run the specs, just type
 
@@ -20,7 +20,7 @@ been tested with RabbitMQ.
 
   rake integration
   
-h2. LICENSE
+== LICENSE
 
 (The MIT License)
 
