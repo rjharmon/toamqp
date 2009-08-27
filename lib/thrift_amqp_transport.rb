@@ -1,8 +1,11 @@
 
+require 'thrift'    # for messaging
 require 'bunny'     # for AMQP interaction
 
-module Thrift;
-  module AMQPTransport
+module Thrift
+  module AMQP
     VERSION = '0.1.0'
   end
 end
+
+require 'thrift_amqp/server_transport'
