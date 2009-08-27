@@ -67,7 +67,7 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
       Thrift::AMQP::Transport.connect('exchange_name')
     end
     it "should access the exchange specified" do
-      bunny.should_receive(:exchange).with('exchange_name').once
+      bunny.should_receive(:exchange).with('exchange_name', Hash).once
       
       Thrift::AMQP::Transport.connect('exchange_name')
     end
