@@ -1,7 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 $:.unshift File.dirname(__FILE__) + "/gen-rb"
-require 'test'
+begin
+  require 'test'
+rescue LoadError
+  puts "No test interface found. Maybe you should run 'rake thrift' first?"
+end
 
 describe "AMQP Transport Integration (oneway)" do
   EXCHANGE_NAME = 'integration_spec_oneway'
