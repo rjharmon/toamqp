@@ -9,26 +9,14 @@ class Thrift::AMQP::ServerTransport
   end
   
   def listen
-    # Connect to RabbitMQ
-    @connection = Bunny.new   # TODO connection settings
-    @connection.start
-
-    # Create an exchange called +exchange_name+. 
-    begin 
-      @exchange = @connection.exchange(@exchange_name, 
-        :type => :fanout, 
-        :auto_delete => true)
-    rescue Bunny::ProtocolError
-      raise "Could not create exchange #{@exchange_name}, maybe it exists?"
-    end
+    @transport = Thrift::AMQP::Transport.connect(@exchange_name)
   end
 
   def accept
-    Thrift::AMQP::Transport.new(@connection, @exchange)
+    @transport
   end  
   
   def close
-    @connection.stop
   end
 
 private

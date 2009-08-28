@@ -56,9 +56,7 @@ describe Thrift::AMQP::ServerTransport do
         transport.listen
       end
 
-      it "should send #stop to the bunny" do
-        bunny.should_receive(:stop).once
-        
+      it "should not fail" do
         transport.close
       end
     end
