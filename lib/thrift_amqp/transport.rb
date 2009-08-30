@@ -22,7 +22,7 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
   # * +headers+ - The headers to look for (receive) or the headers to send. 
   #   Client and server should provide the same arguments. 
   #
-  def self.connect(exchange_name, headers)
+  def self.connect(exchange_name, headers={})
     connection = Bunny.new
     connection.start
     
@@ -33,7 +33,13 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
       raise "Could not create exchange #{@exchange_name}, maybe it exists (with different params)?"
     end
     
-    instance = new(connection, exchange)
+    # Make sure the queue exists. The server doesn't use this, but no harm 
+    # in creating this anyway. 
+    queue = connection.queue(exchange_name, 
+      :auto_delete => true)
+    queue.bind(exchange)
+    
+    instance = new(connection, exchange, queue)
     instance
   end
   
@@ -42,22 +48,16 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
   #
   # It might be more simple to use the Transport.connect method.
   #
-  def initialize(connection, exchange)
+  def initialize(connection, exchange, queue)
     @connection = connection
-    @exchange = exchange
+    @exchange   = exchange
+    @queue      = queue
     
     @buffered_message = ''
     @write_buffer = ''
   end
   
   def read(sz)
-    unless @queue
-      @queue = @connection.queue(@exchange.name, 
-        :auto_delete => true)
-      
-      @queue.bind(@exchange)
-    end
-    
     # loop and pop until we have something to show 
     loop do
       if buffered_message?

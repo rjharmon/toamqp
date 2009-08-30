@@ -72,12 +72,6 @@ describe "AMQP Transport Integration (oneway)" do
       
       # Try to kill the exchange and the queue 
       connection = Bunny.new 
-      # connection.start
-      # 
-      # # connection.exchange(EXCHANGE_NAME, :type => :fanout).delete
-      # # connection.queue(EXCHANGE_NAME).delete
-      # 
-      # connection.stop
     end
     
     it "should successfully send a message" do
