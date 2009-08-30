@@ -3,11 +3,49 @@
 == DESCRIPTION
 
 Transports thrift messages over a the advanced message queue protocol. (AMQP)
-This is an early release that features only one-way communication. 
+Because of the unconnected broadcasting nature of the message queue, this 
+transport supports only one-way communication. 
+
+The usage scenario is that you would use this to broadcast information about 
+services (1 producer, n consumers) and then create point to point connections 
+from client to service using normal (TCP) thrift. You gain the advantage of
+using only one interface definition language (IDL). 
 
 == SYNOPSIS
 
-... coming soon
+Using the following interface definition: 
+
+  service AwesomeService {
+    // a little hommage 
+    oneway void battleCry(1:string battlecry);
+  }
+
+On the server (consumer of messages): 
+
+  class MyAwesomeHandler
+    def battleCry(message)
+      puts messages
+    end
+  end
+  
+  handler = MyAwesomeHandler.new()
+  processor = AwesomeService::Processor.new(handler)
+  
+  # Connecting to the exchange called 'battle_cry'. This must match the
+  # clients setting.    
+  server_transport = Thrift::AMQP::ServerTransport.new('battle_cry')
+  
+  server = Thrift::SimpleServer.new(processor, transport)
+  
+  server.serve    # never returns
+
+On the client: 
+
+  transport = Thrift::AMQP::Transport.connect('battle_cry')
+  protocol = Thrift::BinaryProtocol.new(transport)
+  client = AwesomeService::Client.new(protocol)
+  
+  client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
 
 == SPECIFICATION
 
