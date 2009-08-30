@@ -1,16 +1,34 @@
 
+# Transport of thrift messages (oneway) using an AMQP backend. 
+#
+# Example: 
+#
+#   transport = Thrift::AMQP::Transport.connect('battle_cry')
+#   protocol = Thrift::BinaryProtocol.new(transport)
+#   client = AwesomeService::Client.new(protocol)
+#   
+#   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
+#
 class Thrift::AMQP::Transport < Thrift::BaseTransport
   POLL_SLEEP = 0.01
   
-  # Connects the transport to the queue on the client side. 
+  # Connects the transport to the queue. Since client and server use much of
+  # the same method to to this (and since queues/exchanges must be declared
+  # with the same parameters), this is code shared between the server and 
+  # the client.
+  # 
+  # Parameters: 
+  # * +exchange_name+ - The name of the exchange to connect to. 
+  # * +headers+ - The headers to look for (receive) or the headers to send. 
+  #   Client and server should provide the same arguments. 
   #
-  def self.connect(exchange_name)
+  def self.connect(exchange_name, headers)
     connection = Bunny.new
     connection.start
     
     exchange = begin
       connection.exchange(exchange_name, 
-        :type => :fanout)     # TODO move all this code to ONE location
+        :type => :fanout)
     rescue Bunny::ProtocolError
       raise "Could not create exchange #{@exchange_name}, maybe it exists (with different params)?"
     end
@@ -20,7 +38,9 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
   end
   
   # Constructs a transport based on an existing connection and a message
-  # exchange (of the headers type).
+  # exchange (of the headers type). 
+  #
+  # It might be more simple to use the Transport.connect method.
   #
   def initialize(connection, exchange)
     @connection = connection
