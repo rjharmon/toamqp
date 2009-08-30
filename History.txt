@@ -1,3 +1,7 @@
+=== 0.1.1 / ???
+
+* FIXED: Race condition on server/client creation
+
 === 0.1.0 / 2009-08-27
 
 * One-way communication with a thrift service, using a header exchange.
