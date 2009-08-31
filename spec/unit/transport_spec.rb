@@ -22,7 +22,7 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
       :pop  => :queue_empty
     )
     
-    @transport = Thrift::AMQP::Transport.new(connection, exchange)
+    @transport = Thrift::AMQP::Transport.new(connection, exchange, queue)
   end
   
   describe "#read(sz)" do
@@ -46,14 +46,19 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
 end
 
 describe Thrift::AMQP::Transport, 'when using .connect (client)' do
-  attr_reader :bunny, :exchange
+  attr_reader :bunny, :exchange, :queue
   before(:each) do
     @bunny = flexmock(:bunny)
     @exchange = flexmock(:exchange)
+    @queue = flexmock(:queue)
+    
+    set_defaults(queue, 
+      :bind => nil)
     
     set_defaults(bunny, 
       :start => nil,
-      :exchange => exchange)
+      :exchange => exchange, 
+      :queue => queue)
     
     set_defaults(exchange, 
       :name => 'exchange')
