@@ -5,9 +5,10 @@ Rakefile
 lib/thrift_amqp/server_transport.rb
 lib/thrift_amqp/transport.rb
 lib/thrift_amqp_transport.rb
+spec/integration/oneway_spec.rb
 spec/integration/test.thrift
-spec/integration/thrift_amqp_transport_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
 spec/unit/server_transport_spec.rb
 spec/unit/transport_spec.rb
+thrift_amqp_transport.gemspec
