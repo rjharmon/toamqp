@@ -10,3 +10,4 @@ end
 
 require 'thrift_amqp/server_transport'
 require 'thrift_amqp/transport'
+require 'thrift_amqp/connection'
