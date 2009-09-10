@@ -2,3 +2,4 @@ doc
 pkg
 .source_index
 spec/integration/gen-rb
+connection.yml
