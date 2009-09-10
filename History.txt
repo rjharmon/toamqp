@@ -1,6 +1,8 @@
 === 0.1.1 / ???
 
 * FIXED: Race condition on server/client creation
+* All connects now go through the Connection class. This is the main class and
+  the others don't really need to be exposed anymore.
 
 === 0.1.0 / 2009-08-27
 
