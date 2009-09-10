@@ -48,14 +48,14 @@ describe Thrift::AMQP::Connection do
 
     it "should create a client transport" do
       flexmock(connection).
-        should_receive(:create_exchange_and_queue).and_return(nil, nil)
+        should_receive(:create_exchange_and_queue).and_return([nil, nil])
         
       connection.server_transport('chunky_bacon').
         should be_an_instance_of(Thrift::AMQP::ServerTransport)
     end
     it "should create a client transport" do
       flexmock(connection).
-        should_receive(:create_exchange_and_queue).and_return(nil, nil)
+        should_receive(:create_exchange_and_queue).and_return([nil, nil])
         
       connection.client_transport('chunky_bacon').
         should be_an_instance_of(Thrift::AMQP::Transport)
