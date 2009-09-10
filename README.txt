@@ -54,7 +54,9 @@ To run the specs, just type
   rake specs
   
 Integration tests need a AMQP-Server to run on localhost. This has so far only
-been tested with RabbitMQ. (http://www.rabbitmq.com/)
+been tested with RabbitMQ. (http://www.rabbitmq.com/) Alternatively, you may
+specify the location of your AMQP-Server by filling in connection.yml in the
+project's root.
 
   rake thrift
   rake integration
