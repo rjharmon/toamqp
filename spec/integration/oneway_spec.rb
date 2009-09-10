@@ -22,7 +22,7 @@ describe "AMQP Transport Integration (oneway)" do
     if File.exist?(filename)
       settings = YAML.load(File.read(filename))
       
-      @connection_credentials = HashWithIndifferentAccess.new(settings)
+      @connection_credentials = HashWithIndifferentAccess.new(settings)[:connection]
     end
     
     @connection = Thrift::AMQP::Connection.start(@connection_credentials)
@@ -71,7 +71,7 @@ describe "AMQP Transport Integration (oneway)" do
     attr_reader :server, :client
     before(:each) do
       # Server setup
-      @server = SpecTestServer.new
+      @server = SpecTestServer.new(connection)
       
       # Client setup
       begin
@@ -107,7 +107,7 @@ describe "AMQP Transport Integration (oneway)" do
       attr_reader :second_server
       before(:each) do
         # Server setup
-        @second_server = SpecTestServer.new
+        @second_server = SpecTestServer.new(connection)
       end
       after(:each) do
         second_server.close

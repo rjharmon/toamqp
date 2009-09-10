@@ -5,8 +5,11 @@
 #
 class Thrift::AMQP::Connection 
   def initialize(credentials = {})
-    @credentials = credentials.dup
-    
+    @credentials = credentials.inject({}) { 
+      |hash, (k,v)| 
+      hash[k.to_sym] = v
+      hash
+    }
     @credentials[:pass] = @credentials.delete(:password) || ''
   end
   
