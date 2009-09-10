@@ -4,6 +4,16 @@
 # might eventually need. 
 #
 class Thrift::AMQP::Connection 
+  def initialize(credentials = {})
+  end
+  
+  # Internal command to create and start the connection. 
+  #
+  def start
+    
+    self
+  end
+
   # Connects to a AMQP server. 
   #
   # Parameters: 
@@ -13,7 +23,8 @@ class Thrift::AMQP::Connection
   #   +user+  :: user to connect with
   #   +password+ :: password to use for the connection.
   #
-  def initialize(credentials)
+  def self.start(credentials = {})
+    new(credentials).start
   end
   
   # Constructs and returns a server transport for use with any of thrifts
