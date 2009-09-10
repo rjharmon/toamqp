@@ -5,11 +5,16 @@
 #
 class Thrift::AMQP::Connection 
   def initialize(credentials = {})
+    @credentials = credentials.dup
+    
+    @credentials[:pass] = @credentials.delete(:password) || ''
   end
   
   # Internal command to create and start the connection. 
   #
   def start
+    @connection = Bunny.new(@credentials)
+    @connection.start    
     
     self
   end
@@ -33,6 +38,7 @@ class Thrift::AMQP::Connection
   #
   # Parameters: 
   #   +queue_name+ :: queue to connect to
+  #   +headers+    :: set of headers that all received messages must have
   #
   # Example:
   #
@@ -50,8 +56,9 @@ class Thrift::AMQP::Connection
   # 
   #   server.serve    # never returns
   #
-  def server_transport(queue_name)
-    
+  def server_transport(queue_name, headers={})
+    Thrift::AMQP::ServerTransport.new(
+      *create_exchange_and_queue(queue_name, headers))
   end
   
   # Constructs and returns a client transport for use with the client 
@@ -59,6 +66,7 @@ class Thrift::AMQP::Connection
   #
   # Parameters: 
   #   +queue_name+ :: queue to connect to
+  #   +headers+    :: set of headers that all sent messages have
   #
   # Example: 
   #
@@ -68,7 +76,25 @@ class Thrift::AMQP::Connection
   #   
   #   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
   #
-  def client_transport(queue_name)
-    
+  def client_transport(queue_name, headers={})
+    Thrift::AMQP::Transport.new(
+      *create_exchange_and_queue(queue_name, headers))
+  end
+  
+  def create_exchange_and_queue(queue_name, headers)
+    exchange = begin
+      @connection.exchange(queue_name, 
+        :type => :fanout)
+    rescue Bunny::ProtocolError
+      raise "Could not create exchange #{@exchange_name}, maybe it exists (with different params)?"
+    end
+
+    # Make sure the queue exists. The server doesn't use this, but no harm 
+    # in creating this anyway. 
+    queue = @connection.queue(queue_name, 
+      :auto_delete => true)
+    queue.bind(exchange)
+
+    [exchange, queue]
   end
 end
