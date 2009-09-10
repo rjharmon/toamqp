@@ -3,14 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' do
   attr_reader :transport, :connection, :exchange, :queue
   before(:each) do
-    @connection = flexmock(:connection)
     @exchange = flexmock(:exchange)
     @queue = flexmock(:queue)
-    
-    # Stub an interface for the connection 
-    set_defaults(connection, 
-      :queue => queue
-    )
     
     set_defaults(exchange, 
       :name => 'exchange'
@@ -22,7 +16,7 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
       :pop  => :queue_empty
     )
     
-    @transport = Thrift::AMQP::Transport.new(connection, exchange, queue)
+    @transport = Thrift::AMQP::Transport.new(exchange, queue)
   end
   
   describe "#read(sz)" do
@@ -48,52 +42,19 @@ end
 describe Thrift::AMQP::Transport, 'when using .connect (client)' do
   attr_reader :bunny, :exchange, :queue
   before(:each) do
-    @bunny = flexmock(:bunny)
     @exchange = flexmock(:exchange)
     @queue = flexmock(:queue)
     
     set_defaults(queue, 
       :bind => nil)
     
-    set_defaults(bunny, 
-      :start => nil,
-      :exchange => exchange, 
-      :queue => queue)
-    
     set_defaults(exchange, 
       :name => 'exchange')
-    
-    flexmock(Bunny).should_receive(:new).and_return bunny
   end
-  describe ".connect(exchange_name)" do
-    it "should create a connection to the AMQP server" do
-      bunny.should_receive(:start).once
-      
-      Thrift::AMQP::Transport.connect('exchange_name')
-    end
-    it "should access the exchange specified" do
-      bunny.should_receive(:exchange).with('exchange_name', Hash).once
-      
-      Thrift::AMQP::Transport.connect('exchange_name')
-    end
-    it "should return a transport instance" do
-      transport = Thrift::AMQP::Transport.connect('exchange_name')
-      
-      transport.should be_instance_of(Thrift::AMQP::Transport)
-    end 
-    it "should raise a nice error when exchange can't be created" do
-      bunny.should_receive(:exchange).and_raise(Bunny::ProtocolError)
-
-      lambda {
-        transport = Thrift::AMQP::Transport.connect('exchange_name')
-      }.should raise_error()
-    end 
-  end
-
   context 'connected' do
     attr_reader :transport
     before(:each) do
-      @transport = Thrift::AMQP::Transport.connect('exchange_name')
+      @transport = Thrift::AMQP::Transport.new(exchange, queue)
     end
     
     describe "write(buffer)" do
