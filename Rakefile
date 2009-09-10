@@ -3,6 +3,11 @@ require 'hoe'
 namespace :hoe do # Too much out of the box... 
   Hoe.spec 'thrift_amqp_transport' do 
     developer('Kaspar Schiess', 'eule@space.ch')
+    
+    extra_deps << ['bunny', '>=0.5.2']
+    
+    # For trivial reasons...
+    extra_dev_deps << ['activesupport', '>=2.3.3']
   end
 end
 

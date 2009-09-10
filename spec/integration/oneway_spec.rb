@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+require 'active_support'
+
 $:.unshift File.dirname(__FILE__) + "/gen-rb"
 begin
   require 'test'
@@ -9,6 +11,22 @@ end
 
 describe "AMQP Transport Integration (oneway)" do
   EXCHANGE_NAME = 'integration_spec_oneway'
+  attr_reader :connection
+  before(:each) do
+    @connection_credentials = {
+      :host => 'localhost', 
+      :vhost => '/'
+    }
+    
+    filename = PROJECT_BASE + "/connection.yml"
+    if File.exist?(filename)
+      settings = YAML.load(File.read(filename))
+      
+      @connection_credentials = HashWithIndifferentAccess.new(settings)
+    end
+    
+    @connection = Thrift::AMQP::Connection.start(@connection_credentials)
+  end
   
   class SpecHandler
     attr_reader :messages
@@ -22,10 +40,10 @@ describe "AMQP Transport Integration (oneway)" do
   
   class SpecTestServer 
     attr_reader :handler
-    def initialize()
+    def initialize(connection)
       @handler = SpecHandler.new()
       @processor = Test::Processor.new(handler)
-      @server_transport = Thrift::AMQP::ServerTransport.new(EXCHANGE_NAME)
+      @server_transport = connection.server_transport(EXCHANGE_NAME)
     end
     
     # Spins the server and makes it read the next +message_count+ messages.
@@ -57,7 +75,7 @@ describe "AMQP Transport Integration (oneway)" do
       
       # Client setup
       begin
-        @transport = Thrift::AMQP::Transport.connect(EXCHANGE_NAME)
+        @transport = connection.client_transport(EXCHANGE_NAME)
         protocol = Thrift::BinaryProtocol.new(@transport)
         @client = Test::Client.new(protocol)
       rescue Bunny::ServerDownError
@@ -69,9 +87,6 @@ describe "AMQP Transport Integration (oneway)" do
     after(:each) do
       @server.close
       @transport.close
-      
-      # Try to kill the exchange and the queue 
-      connection = Bunny.new 
     end
     
     it "should successfully send a message" do
