@@ -19,6 +19,12 @@ Using the following interface definition:
     // a little hommage 
     oneway void battleCry(1:string battlecry);
   }
+  
+Create a connection to your AMQP server: 
+
+  connection = Thrift::AMQP::Connection.start(
+    :host => 'mq.mydomain.com
+  )
 
 On the server (consumer of messages): 
 
@@ -30,10 +36,7 @@ On the server (consumer of messages):
   
   handler = MyAwesomeHandler.new()
   processor = AwesomeService::Processor.new(handler)
-  
-  # Connecting to the exchange called 'battle_cry'. This must match the
-  # clients setting.    
-  server_transport = Thrift::AMQP::ServerTransport.new('battle_cry')
+  server_transport = connection.server_transport('battle_cry')
   
   server = Thrift::SimpleServer.new(processor, transport)
   
@@ -41,7 +44,7 @@ On the server (consumer of messages):
 
 On the client: 
 
-  transport = Thrift::AMQP::Transport.connect('battle_cry')
+  transport = connection.client_transport('battle_cry')
   protocol = Thrift::BinaryProtocol.new(transport)
   client = AwesomeService::Client.new(protocol)
   
