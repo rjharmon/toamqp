@@ -66,7 +66,7 @@ describe "AMQP Transport Integration (oneway)" do
       @server_transport.close
     end
   end
-  
+    
   context 'with a server in the background' do
     attr_reader :server, :client
     before(:each) do

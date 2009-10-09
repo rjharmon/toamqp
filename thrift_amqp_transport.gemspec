@@ -1,4 +1,4 @@
-(in /Users/kaspar/git/own/thrift_amqp_transport)
+(in /Users/kschiess/git/kschiess/thrift_amqp_transport)
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess"]
-  s.date = %q{2009-09-10}
+  s.date = %q{2009-10-09}
   s.description = %q{Transports thrift messages over a the advanced message queue protocol. (AMQP)
 Because of the unconnected broadcasting nature of the message queue, this 
 transport supports only one-way communication. 
@@ -30,17 +30,17 @@ using only one interface definition language (IDL).}
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<bunny>, [">= 0.5.2"])
+      s.add_runtime_dependency(%q<bunny>, [">= 0.6.0"])
       s.add_development_dependency(%q<activesupport>, [">= 2.3.3"])
-      s.add_development_dependency(%q<hoe>, [">= 2.3.2"])
+      s.add_development_dependency(%q<hoe>, [">= 2.3.3"])
     else
-      s.add_dependency(%q<bunny>, [">= 0.5.2"])
+      s.add_dependency(%q<bunny>, [">= 0.6.0"])
       s.add_dependency(%q<activesupport>, [">= 2.3.3"])
-      s.add_dependency(%q<hoe>, [">= 2.3.2"])
+      s.add_dependency(%q<hoe>, [">= 2.3.3"])
     end
   else
-    s.add_dependency(%q<bunny>, [">= 0.5.2"])
+    s.add_dependency(%q<bunny>, [">= 0.6.0"])
     s.add_dependency(%q<activesupport>, [">= 2.3.3"])
-    s.add_dependency(%q<hoe>, [">= 2.3.2"])
+    s.add_dependency(%q<hoe>, [">= 2.3.3"])
   end
 end

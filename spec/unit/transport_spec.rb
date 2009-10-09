@@ -21,18 +21,21 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
   
   describe "#read(sz)" do
     it "should poll for a new message on the queue" do
-      queue.should_receive(:pop).and_return(:queue_empty,:queue_empty,'message')
+      queue_empty_message = { :payload => :queue_empty }
+      message_message = { :payload => 'message' }
+      queue.should_receive(:pop).
+        and_return(queue_empty_message, queue_empty_message, message_message)
       
       transport.read(1).should == 'm'
     end
     it "should return sz bytes" do
-      queue.should_receive(:pop).and_return(' '*1000)
+      queue.should_receive(:pop).and_return(:payload => ' '*1000)
       
       transport.read(999).size.should == 999
       transport.read(10).size.should == 1
     end
     it "should return at most the whole message" do
-      queue.should_receive(:pop).and_return(' '*1000)
+      queue.should_receive(:pop).and_return(:payload => ' '*1000)
       
       transport.read(2000).size.should == 1000
     end

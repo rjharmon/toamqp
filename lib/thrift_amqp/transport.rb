@@ -22,7 +22,7 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
         return buffered_message.slice!(0,sz) || ''
       end
       
-      self.buffered_message = @queue.pop
+      self.buffered_message = @queue.pop[:payload]
       sleep POLL_SLEEP unless buffered_message?
     end
   end
