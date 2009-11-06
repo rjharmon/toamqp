@@ -3,13 +3,19 @@
 #
 class Thrift::AMQP::Transport < Thrift::BaseTransport
   POLL_SLEEP = 0.01
+  
+  # Headers that are used for posting messages to the queue. See also the 
+  # constructor argument with the same name.
+  #
+  attr_reader :headers
     
   # Constructs a transport based on an existing connection and a message
   # exchange (of the headers type). 
   #
-  def initialize(exchange, queue)
+  def initialize(exchange, queue=nil, headers={})
     @exchange   = exchange
     @queue      = queue
+    @headers    = headers
     
     @buffered_message = ''
     @write_buffer = ''
@@ -31,7 +37,7 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
     write_buffer << buffer
   end
   def flush
-    @exchange.publish(write_buffer)
+    @exchange.publish(write_buffer, :headers => @headers)
     self.write_buffer = ''
   end
   

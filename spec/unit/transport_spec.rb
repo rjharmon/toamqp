@@ -54,15 +54,18 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
     set_defaults(exchange, 
       :name => 'exchange')
   end
+  
   context 'connected' do
     attr_reader :transport
     before(:each) do
-      @transport = Thrift::AMQP::Transport.new(exchange, queue)
+      @transport = Thrift::AMQP::Transport.new(exchange, queue, :foo => :bar)
     end
     
     describe "write(buffer)" do
       it "should publish messages to the exchange" do
-        exchange.should_receive(:publish).with("some message (encoded by thrift)").once
+        exchange.should_receive(:publish).
+          with("some message (encoded by thrift)", :headers => {:foo => :bar}).
+          once
 
         transport.write("some message (encoded by thrift)")
         transport.flush
@@ -73,7 +76,7 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
         transport.write("some message (encoded by thrift)")
       end 
       it "should publish on #flush" do
-        exchange.should_receive(:publish).with("foobar").once
+        exchange.should_receive(:publish).once
 
         transport.write("foo")
         transport.write("bar")

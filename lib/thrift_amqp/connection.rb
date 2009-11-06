@@ -1,10 +1,12 @@
-
+require 'uuid'
 
 # Connection to the AMQP server and a factory for all the transports you 
 # might eventually need. 
 #
 class Thrift::AMQP::Connection 
   def initialize(credentials = {})
+    @uuid_generator = UUID.new
+    
     @credentials = credentials.inject({}) { 
       |hash, (k,v)| 
       hash[k.to_sym] = v
@@ -40,8 +42,8 @@ class Thrift::AMQP::Connection
   # receiving calls through the queue and does something with them. 
   #
   # Parameters: 
-  #   +queue_name+ :: queue to connect to
-  #   +headers+    :: set of headers that all received messages must have
+  #   +exchange_name+ :: exchange to connect to
+  #   +headers+       :: set of headers that all received messages must have
   #
   # Example:
   #
@@ -59,17 +61,20 @@ class Thrift::AMQP::Connection
   # 
   #   server.serve    # never returns
   #
-  def server_transport(queue_name, headers={})
+  def server_transport(exchange_name, headers={})
+    exchange = _create_exchange(exchange_name)
+    
     Thrift::AMQP::ServerTransport.new(
-      *create_exchange_and_queue(queue_name, headers))
+      exchange, 
+      _create_queue(exchange, exchange_name, headers))
   end
   
   # Constructs and returns a client transport for use with the client 
   # thrift generates for your service. 
   #
   # Parameters: 
-  #   +queue_name+ :: queue to connect to
-  #   +headers+    :: set of headers that all sent messages have
+  #   +exchange_name+ :: exchange to connect to
+  #   +headers+       :: set of headers that all sent messages have
   #
   # Example: 
   #
@@ -79,25 +84,49 @@ class Thrift::AMQP::Connection
   #   
   #   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
   #
-  def client_transport(queue_name, headers={})
+  def client_transport(exchange_name, headers={})
     Thrift::AMQP::Transport.new(
-      *create_exchange_and_queue(queue_name, headers))
+      _create_exchange(exchange_name),
+      nil, 
+      stringify(headers))
   end
-  
-  def create_exchange_and_queue(queue_name, headers)
-    exchange = begin
-      @connection.exchange(queue_name, 
-        :type => :fanout)
+
+  def _create_exchange(name)
+    begin
+      @connection.exchange(name, 
+        :type => :headers)
     rescue Bunny::ProtocolError
       raise "Could not create exchange #{@exchange_name}, maybe it exists (with different params)?"
     end
-
-    # Make sure the queue exists. The server doesn't use this, but no harm 
-    # in creating this anyway. 
-    queue = @connection.queue(queue_name, 
+  end
+  def _create_queue(exchange, base_name, headers) 
+    queue = @connection.queue(
+      queue_name(base_name), 
       :auto_delete => true)
-    queue.bind(exchange)
-
-    [exchange, queue]
+          
+    queue.bind(exchange, 
+      :arguments => stringify(headers).merge('x-match'=>'all'))
+      
+    queue
+  end
+  
+  # Generates a globally unique queue name for a given exchange name. 
+  # This ensures that the server that uses this will get his messages, 
+  # even if there are other servers connected to the same exchange.
+  #
+  def queue_name(exchange_name)
+    "%s-%s" % [
+      exchange_name, 
+      @uuid_generator.generate]
+  end
+  
+  # Returns a duplicate of the hash, where keys and values are turned into
+  # strings.
+  #
+  def stringify(hash)
+    stringified = hash.
+      inject({}) { |new_hash, (key, value)| 
+        new_hash[key.to_s] = value.to_s
+        new_hash }
   end
 end

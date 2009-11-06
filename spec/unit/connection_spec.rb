@@ -30,6 +30,10 @@ describe Thrift::AMQP::Connection do
         :user => 'foo', 
         :password => 'bar'
       )
+      
+      flexmock(connection).
+        should_receive(:_create_exchange).and_return(nil).
+        should_receive(:_create_queue).and_return(nil)
     end
 
     describe "#start" do
@@ -46,19 +50,47 @@ describe Thrift::AMQP::Connection do
       end 
     end
 
-    it "should create a client transport" do
-      flexmock(connection).
-        should_receive(:create_exchange_and_queue).and_return([nil, nil])
-        
+    it "should create a server transport" do
       connection.server_transport('chunky_bacon').
         should be_an_instance_of(Thrift::AMQP::ServerTransport)
     end
-    it "should create a client transport" do
-      flexmock(connection).
-        should_receive(:create_exchange_and_queue).and_return([nil, nil])
-        
-      connection.client_transport('chunky_bacon').
-        should be_an_instance_of(Thrift::AMQP::Transport)
+    describe "#client_transport" do
+      attr_reader :transport
+      before(:each) do
+        @transport = connection.client_transport('chunky_bacon', :foo => :bar)
+      end
+      
+      it "should be an instance of Thrift::AMQP::Transport" do
+        transport.should be_an_instance_of(Thrift::AMQP::Transport)
+      end
+      it "should contain a correct set of headers" do
+        transport.headers['foo'].should == 'bar'
+      end
+    end
+
+    describe "#stringify" do
+      attr_reader :result
+      before(:each) do
+        @result = connection.stringify(
+          :foo => :bar)
+      end
+      
+      it "should convert keys" do
+        result.keys.should include('foo')
+      end
+      it "should convert values" do
+        result.values.should include('bar')
+      end
+    end
+    describe "#queue_name(exchange)" do
+      attr_reader :result
+      before(:each) do
+        @result = connection.queue_name('EXCHANGE')
+      end
+      
+      it "should be of the form EXCHANGE-UUID" do
+        result.should match(/EXCHANGE-[a-f0-9-]+/)
+      end 
     end
   end
 end

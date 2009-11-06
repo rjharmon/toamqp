@@ -15,7 +15,7 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
   # 
   def initialize(exchange, queue)
     @exchange = exchange
-    @queue    = queue
+    @queue = queue
   end
   
   # Part of the server 
@@ -25,5 +25,15 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
 
   def accept
     @transport
+  end
+  
+  def close
+    @queue.delete
+  end
+  
+  # Returns true if there are messages waiting to be processed.
+  #
+  def waiting?
+    @queue.message_count > 0
   end
 end

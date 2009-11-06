@@ -5,6 +5,7 @@ namespace :hoe do # Too much out of the box...
     developer('Kaspar Schiess', 'eule@space.ch')
     
     extra_deps << ['bunny', '>=0.6.0']
+    extra_deps << ['uuid', '>=2.0.2']
     
     # For trivial reasons...
     extra_dev_deps << ['activesupport', '>=2.3.3']

@@ -8,7 +8,11 @@ describe Thrift::AMQP::ServerTransport do
     before(:each) do
       @exchange = flexmock(:exchange)
       @queue    = flexmock(:queue)
-      @transport = Thrift::AMQP::ServerTransport.new(flexmock(:exchange), flexmock(:queue))
+      @transport = Thrift::AMQP::ServerTransport.new(
+        exchange, 
+        queue)
+        
+      queue.should_receive(:delete).by_default
     end
 
     describe "#accept (2: accept a connection, returns a transport)" do
@@ -27,6 +31,11 @@ describe Thrift::AMQP::ServerTransport do
       it "should not fail" do
         transport.close
       end
+      it "should call #delete on the queue" do
+        queue.should_receive(:delete).once
+        
+        transport.close
+      end 
     end
   end
 end

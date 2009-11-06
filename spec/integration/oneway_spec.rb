@@ -28,6 +28,23 @@ describe "AMQP Transport Integration (oneway)" do
     @connection = Thrift::AMQP::Connection.start(@connection_credentials)
   end
   
+  # Sets up a client for the given header filter. 
+  #
+  def client_for(headers={})
+    begin
+      transport = connection.client_transport(EXCHANGE_NAME, headers)
+      protocol = Thrift::BinaryProtocol.new(transport)
+      
+      Test::Client.new(protocol)
+    rescue Bunny::ServerDownError
+      raise "Could not connect - is your local RabbitMQ running?"
+    ensure 
+      transport.open
+    end
+  end
+  
+  # A handler class that will help with testing. 
+  #
   class SpecHandler
     attr_reader :messages
     def initialize
@@ -38,25 +55,28 @@ describe "AMQP Transport Integration (oneway)" do
     end
   end
   
+  # A server class that allows limited runs of the server loop. 
+  #
   class SpecTestServer 
     attr_reader :handler
-    def initialize(connection)
+    
+    # Creates a test server that will process messages and then quit. 
+    #
+    def initialize(connection, headers = {})
       @handler = SpecHandler.new()
       @processor = Test::Processor.new(handler)
-      @server_transport = connection.server_transport(EXCHANGE_NAME)
+      @server_transport = connection.server_transport(EXCHANGE_NAME, headers)
     end
     
     # Spins the server and makes it read the next +message_count+ messages.
     #
-    def spin_server(message_count)
+    def spin_server
       @server_transport.listen
       client = @server_transport.accept
       prot = Thrift::BinaryProtocol.new(client)
-      
-      messages_left = message_count
-      while messages_left > 0
+            
+      while @server_transport.waiting?
         @processor.process(prot, prot)
-        messages_left -= 1
       end
     ensure
       client.close
@@ -73,26 +93,16 @@ describe "AMQP Transport Integration (oneway)" do
       # Server setup
       @server = SpecTestServer.new(connection)
       
-      # Client setup
-      begin
-        @transport = connection.client_transport(EXCHANGE_NAME)
-        protocol = Thrift::BinaryProtocol.new(@transport)
-        @client = Test::Client.new(protocol)
-      rescue Bunny::ServerDownError
-        raise "Could not connect - is your local RabbitMQ running?"
-      end
-
-      @transport.open
+      @client = client_for()
     end
     after(:each) do
       @server.close
-      @transport.close
     end
     
     it "should successfully send a message" do
       client.sendMessage("a message")
 
-      server.spin_server 1
+      server.spin_server
       server.handler.messages.should include('a message')
     end 
     it "should send several messages" do
@@ -100,7 +110,7 @@ describe "AMQP Transport Integration (oneway)" do
         client.sendMessage("a message (#{i})")
       end
 
-      server.spin_server 10
+      server.spin_server
       server.handler.messages.should have(10).messages
     end 
     context "with a second server" do
@@ -118,14 +128,46 @@ describe "AMQP Transport Integration (oneway)" do
           client.sendMessage("a message (#{i})")
         end
 
-        server.spin_server 5
-        second_server.spin_server 5
+        server.spin_server
+        second_server.spin_server
         
         messages = server.handler.messages + second_server.handler.messages
         10.times do |i|
           messages.should include("a message (#{i})")
         end          
       end 
+    end
+  end
+  context 'with two servers, one for dogs and one for cats' do
+    attr_reader :dog_server, :cat_server
+    attr_reader :dog_client, :cat_client
+    before(:each) do
+      @dog_server, @cat_server = [:dog, :cat].
+        map { |type| SpecTestServer.new(connection, :type => type) }
+        
+      @dog_client, @cat_client = [:dog, :cat].
+        map { |type| client_for(:type => type) }
+    end
+    after(:each) do
+      dog_server.close
+      cat_server.close
+    end
+    
+    context "messages sent to dog" do
+      before(:each) do
+        dog_client.sendMessage("wuff")
+        
+        # Cat goes first, if filter is ineffective, messages will end up on cat.
+        cat_server.spin_server
+        dog_server.spin_server
+      end
+      
+      it "should be received by dog" do
+        dog_server.handler.messages.should include('wuff')
+      end
+      it "should not be received by cat" do
+        cat_server.handler.messages.should_not include('wuff')
+      end
     end
   end
 end
