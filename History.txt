@@ -7,6 +7,13 @@
 
 * Tracking bunny version (now 0.6.0) - Queue#pop changed its semantics
   slightly.
+  
+* Now uses the headers argument for message routing. See oneway_spec for an
+  example of this. 
+  
+  As a consequence, all queues generated are private (appending uuid to the
+  exchange name) and messages will get forwarded to all servers that match
+  the headers. This used to be a kind of round robin behavior.
 
 === 0.1.0 / 2009-08-27
 
