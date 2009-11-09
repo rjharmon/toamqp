@@ -36,7 +36,6 @@ class Thrift::AMQP::Service
   attr_reader :exchange
   
   def initialize(connection, name)
-    @uuid = UUID.new
     @connection = connection
     @name = name
     @exchange = _create_exchange(name)
