@@ -14,6 +14,9 @@
   As a consequence, all queues generated are private (appending uuid to the
   exchange name) and messages will get forwarded to all servers that match
   the headers. This used to be a kind of round robin behavior.
+  
+* Service point abstraction over exchanges and queues. Hopefully, this should
+  be more intuitive for users. 
 
 === 0.1.0 / 2009-08-27
 
