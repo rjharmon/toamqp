@@ -1,5 +1,7 @@
 === 0.1.1 / ???
 
+* Service point abstraction over exchanges and queues. 
+
 * FIXED: Race condition on server/client creation
 
 * All connects now go through the Connection class. This is the main class and
@@ -14,9 +16,6 @@
   As a consequence, all queues generated are private (appending uuid to the
   exchange name) and messages will get forwarded to all servers that match
   the headers. This used to be a kind of round robin behavior.
-  
-* Service point abstraction over exchanges and queues. Hopefully, this should
-  be more intuitive for users. 
 
 === 0.1.0 / 2009-08-27
 

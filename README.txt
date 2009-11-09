@@ -22,7 +22,7 @@ Using the following interface definition:
   
 Create a connection to your AMQP server: 
 
-  connection = Thrift::AMQP::Connection.start(
+  connection = Thrift::AMQP.start(
     :host => 'mq.mydomain.com
   )
 
@@ -34,9 +34,10 @@ On the server (consumer of messages):
     end
   end
   
+  service = connection.service('battle_cry')
   handler = MyAwesomeHandler.new()
   processor = AwesomeService::Processor.new(handler)
-  server_transport = connection.server_transport('battle_cry')
+  server_transport = service.endpoint.transport
   
   server = Thrift::SimpleServer.new(processor, transport)
   
@@ -44,7 +45,8 @@ On the server (consumer of messages):
 
 On the client: 
 
-  transport = connection.client_transport('battle_cry')
+  service = connection.service('battle_cry')
+  transport = service.transport
   protocol = Thrift::BinaryProtocol.new(transport)
   client = AwesomeService::Client.new(protocol)
   
