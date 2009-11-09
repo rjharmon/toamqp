@@ -66,10 +66,12 @@ project's root.
   
 == REQUIREMENTS
 
-rabbitmq: local server for integration tests
+rabbitmq-server: local server for integration tests
 thrift: full installation needed if you want to compile service descriptions
 bunny
 
+Whatever server you choose must implement the headers exchange type. RabbitMQ
+does so starting from version 1.6.0.
 
 == LICENSE
 
