@@ -8,11 +8,6 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
   # Initializes a connection to the AMQP queue. If you provide a headers 
   # argument, only messages that match ALL headers will be accepted. 
   #
-  # Example: 
-  #
-  #   Thrift::AMQP::ServerTransport.new('queue', :version => 1)
-  #   # Will only match messages that have 'version' == '1'
-  # 
   def initialize(exchange, queue)
     @exchange = exchange
     @queue = queue
@@ -28,12 +23,18 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
   end
   
   def close
-    @queue.delete
+    # NOTE: We're not currently deleting the queues here, since having
+    # guessable queue names will allow multiple processes to have references
+    # to well known queues. In the future, queues should be deleted through
+    # the endpoint interface. (ksc, 9Nov09)
+    #
+    # @queue.delete
   end
   
   # Returns true if there are messages waiting to be processed.
   #
   def waiting?
+    p @queue.status
     @queue.message_count > 0
   end
 end

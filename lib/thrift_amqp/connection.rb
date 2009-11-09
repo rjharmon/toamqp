@@ -18,7 +18,7 @@ class Thrift::AMQP::Connection
   # Internal command to create and start the connection. 
   #
   def start
-    @connection = Bunny.new(@credentials)
+    @connection = Bunny.new(@credentials.merge(:logging => true))
     @connection.start    
     
     self
