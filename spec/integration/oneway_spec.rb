@@ -25,14 +25,15 @@ describe "AMQP Transport Integration (oneway)" do
       @connection_credentials = HashWithIndifferentAccess.new(settings)[:connection]
     end
     
-    @connection = Thrift::AMQP::Connection.start(@connection_credentials)
+    @connection = Thrift::AMQP.start(@connection_credentials)
   end
   
   # Sets up a client for the given header filter. 
   #
   def client_for(headers={})
     begin
-      transport = connection.client_transport(EXCHANGE_NAME, headers)
+      service = connection.service(EXCHANGE_NAME)
+      transport = service.endpoint(headers).transport
       protocol = Thrift::BinaryProtocol.new(transport)
       
       Test::Client.new(protocol)
@@ -65,7 +66,7 @@ describe "AMQP Transport Integration (oneway)" do
     def initialize(connection, headers = {})
       @handler = SpecHandler.new()
       @processor = Test::Processor.new(handler)
-      @server_transport = connection.server_transport(EXCHANGE_NAME, headers)
+      @server_transport = connection.service(EXCHANGE_NAME).transport(headers)
     end
     
     # Spins the server and makes it read the next +message_count+ messages.

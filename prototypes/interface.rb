@@ -14,7 +14,7 @@ git_service2.queue_name # => repositories_type_git_version_1_0_0
 
 svn_service.queue_name # => repositories_type_svn_version_1_0_0
 
-client_transport = service.transport
+client_transport = service.transport(:type => 'git', :version => '1.0.0')
 server_transport = git_service.transport
 
 ################

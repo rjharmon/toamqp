@@ -8,6 +8,10 @@ class Thrift::AMQP::Transport < Thrift::BaseTransport
   # constructor argument with the same name.
   #
   attr_reader :headers
+  
+  # Exchange that is used for posting the messages (in oneway mode).
+  #
+  attr_reader :exchange
     
   # Constructs a transport based on an existing connection and a message
   # exchange (of the headers type). 

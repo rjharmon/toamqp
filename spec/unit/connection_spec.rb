@@ -5,7 +5,7 @@ describe Thrift::AMQP::Connection do
     flexmock(Thrift::AMQP::Connection).new_instances.
       should_receive(:start).once
 
-    Thrift::AMQP::Connection.start(
+    Thrift::AMQP.start(
       :host => 'somehost', 
       :vhost => '/vhost', 
       :user => 'foo', 
@@ -17,7 +17,7 @@ describe Thrift::AMQP::Connection do
       should_receive(:start).and_raise(Thrift::AMQP::ConnectionError)
     
     lambda {
-      Thrift::AMQP::Connection.start
+      Thrift::AMQP.start
     }.should raise_error(Thrift::AMQP::ConnectionError)
   end
   
@@ -47,49 +47,6 @@ describe Thrift::AMQP::Connection do
           and_return(flexmock(:start => nil))
         
         connection.start
-      end 
-    end
-
-    it "should create a server transport" do
-      connection.server_transport('chunky_bacon').
-        should be_an_instance_of(Thrift::AMQP::ServerTransport)
-    end
-    describe "#client_transport" do
-      attr_reader :transport
-      before(:each) do
-        @transport = connection.client_transport('chunky_bacon', :foo => :bar)
-      end
-      
-      it "should be an instance of Thrift::AMQP::Transport" do
-        transport.should be_an_instance_of(Thrift::AMQP::Transport)
-      end
-      it "should contain a correct set of headers" do
-        transport.headers['foo'].should == 'bar'
-      end
-    end
-
-    describe "#stringify" do
-      attr_reader :result
-      before(:each) do
-        @result = connection.stringify(
-          :foo => :bar)
-      end
-      
-      it "should convert keys" do
-        result.keys.should include('foo')
-      end
-      it "should convert values" do
-        result.values.should include('bar')
-      end
-    end
-    describe "#queue_name(exchange)" do
-      attr_reader :result
-      before(:each) do
-        @result = connection.queue_name('EXCHANGE')
-      end
-      
-      it "should be of the form EXCHANGE-UUID" do
-        result.should match(/EXCHANGE-[a-f0-9-]+/)
       end 
     end
   end
