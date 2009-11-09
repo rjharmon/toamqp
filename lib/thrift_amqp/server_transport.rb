@@ -34,7 +34,6 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
   # Returns true if there are messages waiting to be processed.
   #
   def waiting?
-    p @queue.status
     @queue.message_count > 0
   end
 end

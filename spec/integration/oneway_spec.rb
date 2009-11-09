@@ -88,57 +88,57 @@ describe "AMQP Transport Integration (oneway)" do
     end
   end
     
-  # context 'with a server in the background' do
-  #   attr_reader :server, :client
-  #   before(:each) do
-  #     # Server setup
-  #     @server = SpecTestServer.new(connection)
-  #     
-  #     @client = client_for()
-  #   end
-  #   after(:each) do
-  #     @server.close
-  #   end
-  #   
-  #   it "should successfully send a message" do
-  #     client.sendMessage("a message")
-  # 
-  #     server.spin_server
-  #     server.handler.messages.should include('a message')
-  #   end 
-  #   it "should send several messages" do
-  #     10.times do |i|
-  #       client.sendMessage("a message (#{i})")
-  #     end
-  # 
-  #     server.spin_server
-  #     server.handler.messages.should have(10).messages
-  #   end 
-  #   context "with a second server" do
-  #     attr_reader :second_server
-  #     before(:each) do
-  #       # Server setup
-  #       @second_server = SpecTestServer.new(connection)
-  #     end
-  #     after(:each) do
-  #       second_server.close
-  #     end
-  #     
-  #     it "should allow only one server to receive the message/call" do
-  #       10.times do |i|
-  #         client.sendMessage("a message (#{i})")
-  #       end
-  # 
-  #       server.spin_server
-  #       second_server.spin_server
-  #       
-  #       messages = server.handler.messages + second_server.handler.messages
-  #       10.times do |i|
-  #         messages.should include("a message (#{i})")
-  #       end          
-  #     end 
-  #   end
-  # end
+  context 'with a server in the background' do
+    attr_reader :server, :client
+    before(:each) do
+      # Server setup
+      @server = SpecTestServer.new(connection)
+      
+      @client = client_for()
+    end
+    after(:each) do
+      @server.close
+    end
+    
+    it "should successfully send a message" do
+      client.sendMessage("a message")
+  
+      server.spin_server
+      server.handler.messages.should include('a message')
+    end 
+    it "should send several messages" do
+      10.times do |i|
+        client.sendMessage("a message (#{i})")
+      end
+  
+      server.spin_server
+      server.handler.messages.should have(10).messages
+    end 
+    context "with a second server" do
+      attr_reader :second_server
+      before(:each) do
+        # Server setup
+        @second_server = SpecTestServer.new(connection)
+      end
+      after(:each) do
+        second_server.close
+      end
+      
+      it "should allow only one server to receive the message/call" do
+        10.times do |i|
+          client.sendMessage("a message (#{i})")
+        end
+  
+        server.spin_server
+        second_server.spin_server
+        
+        messages = server.handler.messages + second_server.handler.messages
+        10.times do |i|
+          messages.should include("a message (#{i})")
+        end          
+      end 
+    end
+  end
   context 'with two servers, one for dogs and one for cats' do
     attr_reader :dog_server, :cat_server
     attr_reader :dog_client, :cat_client
@@ -163,9 +163,9 @@ describe "AMQP Transport Integration (oneway)" do
         dog_server.spin_server
       end
       
-      # it "should be received by dog" do
-      #   dog_server.handler.messages.should include('wuff')
-      # end
+      it "should be received by dog" do
+        dog_server.handler.messages.should include('wuff')
+      end
       it "should not be received by cat" do
         cat_server.handler.messages.should_not include('wuff')
       end

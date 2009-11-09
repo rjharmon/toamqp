@@ -31,11 +31,6 @@ describe Thrift::AMQP::ServerTransport do
       it "should not fail" do
         transport.close
       end
-      it "should call #delete on the queue" do
-        queue.should_receive(:delete).once
-        
-        transport.close
-      end 
     end
   end
 end

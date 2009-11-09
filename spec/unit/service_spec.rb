@@ -30,6 +30,19 @@ describe Thrift::AMQP::Connection do
       service.should be_an_instance_of(Thrift::AMQP::Service)
     end
 
+    describe "#stringify" do
+      attr_reader :result
+      before(:each) do
+        @result = service.stringify(:foo => :bar)
+      end
+      
+      it "should stringify keys" do
+        result.keys.should include('foo')
+      end
+      it "should stringify values" do
+        result.values.should include('bar')
+      end
+    end
     describe "#endpoint" do
       attr_reader :endpoint
       before(:each) do
@@ -54,19 +67,6 @@ describe Thrift::AMQP::Connection do
         it "should be an instance of ServerTransport" do
           transport.should be_an_instance_of(Thrift::AMQP::ServerTransport)
         end 
-      end
-      describe "#stringify" do
-        attr_reader :result
-        before(:each) do
-          @result = endpoint.stringify(:foo => :bar)
-        end
-        
-        it "should stringify keys" do
-          result.keys.should include('foo')
-        end
-        it "should stringify values" do
-          result.values.should include('bar')
-        end
       end
     end
     describe "#endpoint(filter)" do

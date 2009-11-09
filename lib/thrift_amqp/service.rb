@@ -53,7 +53,7 @@ class Thrift::AMQP::Service
   #   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
   #
   def transport(filter={})
-    Thrift::AMQP::Transport.new(exchange, nil, filter)
+    Thrift::AMQP::Transport.new(exchange, nil, stringify(filter))
   end
   
   # Creates a service endpoint. This must be used to create a place for
@@ -74,7 +74,7 @@ class Thrift::AMQP::Service
       @connection,
       exchange, 
       @name, 
-      filter)
+      stringify(filter))
   end
   
   # Creates a private endpoint for the service. The difference between a
@@ -109,6 +109,13 @@ class Thrift::AMQP::Service
       
   rescue Bunny::ProtocolError
     raise "Could not create exchange #{name}, maybe it exists (with different params)?"
+  end
+  
+  def stringify(hash)
+    hash.inject({}) { |hash, (k,v)|
+      hash[k.to_s] = v.to_s
+      hash
+    }
   end
 end
 
@@ -156,7 +163,7 @@ class Thrift::AMQP::Endpoint < Thrift::AMQP::BaseEndpoint
       queue.bind(@exchange)
     else
       queue.bind(@exchange, 
-        :arguments => stringify(filter).merge('x-match'=>'all'))
+        :arguments => filter.merge('x-match'=>'all'))
     end
 
     queue
@@ -168,13 +175,6 @@ class Thrift::AMQP::Endpoint < Thrift::AMQP::BaseEndpoint
       filter.to_a.sort.
         map { |(k,v)| "#{k}_#{v}" }
     ].flatten.join('_')
-  end
-  
-  def stringify(hash)
-    hash.inject({}) { |hash, (k,v)|
-      hash[k.to_s] = v.to_s
-      hash
-    }
   end
 end
 
