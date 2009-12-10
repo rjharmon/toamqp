@@ -10,5 +10,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Twoway Messagning" do
+  EXCHANGE_NAME = 'integration_spec_oneway'
+  attr_reader :connection
+  before(:each) do
+    @connection = connect_for_integration_test
+  end
+  
   
 end

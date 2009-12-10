@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 require 'active_support'
 
+require 'support/spec_test_server'
+
 $:.unshift File.dirname(__FILE__) + "/gen-rb"
 begin
   require 'test'
@@ -10,70 +12,12 @@ rescue LoadError
 end
 
 describe "AMQP Transport Integration (oneway)" do
+  include AMQPHelpers
+  
   EXCHANGE_NAME = 'integration_spec_oneway'
   attr_reader :connection
   before(:each) do
     @connection = connect_for_integration_test
-  end
-  
-  # Sets up a client for the given header filter. 
-  #
-  def client_for(headers={})
-    begin
-      service = connection.service(EXCHANGE_NAME)
-      transport = service.transport(headers)
-      protocol = Thrift::BinaryProtocol.new(transport)
-      
-      Test::Client.new(protocol)
-    rescue Bunny::ServerDownError
-      raise "Could not connect - is your local RabbitMQ running?"
-    ensure 
-      transport.open
-    end
-  end
-  
-  # A handler class that will help with testing. 
-  #
-  class SpecHandler
-    attr_reader :messages
-    def initialize
-      @messages = []
-    end
-    def sendMessage(message)
-      @messages << message
-    end
-  end
-  
-  # A server class that allows limited runs of the server loop. 
-  #
-  class SpecTestServer 
-    attr_reader :handler
-    
-    # Creates a test server that will process messages and then quit. 
-    #
-    def initialize(connection, headers = {})
-      @handler = SpecHandler.new()
-      @processor = Test::Processor.new(handler)
-      @server_transport = connection.service(EXCHANGE_NAME).endpoint(headers).transport
-    end
-    
-    # Spins the server and makes it read the next +message_count+ messages.
-    #
-    def spin_server
-      @server_transport.listen
-      client = @server_transport.accept
-      prot = Thrift::BinaryProtocol.new(client)
-            
-      while @server_transport.waiting?
-        @processor.process(prot, prot)
-      end
-    ensure
-      client.close
-    end
-    
-    def close
-      @server_transport.close
-    end
   end
     
   context 'with a server in the background' do
