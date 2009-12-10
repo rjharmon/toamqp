@@ -1,6 +1,6 @@
-= Thrift AMQP transport
+h1. Thrift AMQP transport
 
-== DESCRIPTION
+h2. DESCRIPTION
 
 Transports thrift messages over a the advanced message queue protocol. (AMQP)
 Because of the unconnected broadcasting nature of the message queue, this 
@@ -11,7 +11,7 @@ services (1 producer, n consumers) and then create point to point connections
 from client to service using normal (TCP) thrift. You gain the advantage of
 using only one interface definition language (IDL). 
 
-== SYNOPSIS
+h2. SYNOPSIS
 
 Using the following interface definition: 
 
@@ -52,7 +52,7 @@ On the client:
   
   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
 
-== SPECIFICATION
+h2. SPECIFICATION
 
 To run the specs, just type
 
@@ -66,7 +66,7 @@ project's root.
   rake thrift
   rake integration
   
-== REQUIREMENTS
+h2. REQUIREMENTS
 
 rabbitmq-server: local server for integration tests
 thrift: full installation needed if you want to compile service descriptions
@@ -75,7 +75,7 @@ bunny
 Whatever server you choose must implement the headers exchange type. RabbitMQ
 does so starting from version 1.6.0.
 
-== LICENSE
+h2. LICENSE
 
 (The MIT License)
 
