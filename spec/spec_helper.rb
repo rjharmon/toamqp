@@ -12,18 +12,14 @@ Spec::Runner.configure do |config|
   config.mock_with :flexmock
   
   # This makes the debug output hack work. We might expand this in the future
-  # to also print the location where the debug output has been produced. 
+  # to also print the location where the debug output has been produced. 
   #
   config.after(:all) do
     $stdout.flush
   end
 end
 
-def set_defaults(mock, hash)
-  hash.each do |k, v|
-    mock.should_receive(k).and_return(v).by_default
-  end
-end
+require 'support/connection'
 
 require 'pp'
 class EscapedOut < StringIO

@@ -5,16 +5,14 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
   before(:each) do
     @exchange = flexmock(:exchange)
     @queue = flexmock(:queue)
-    
-    set_defaults(exchange, 
-      :name => 'exchange'
-    )
+
+    exchange.should_receive(
+      :name => 'exchange').by_default
     
     # Stub an interface for the queue
-    set_defaults(queue, 
+    queue.should_receive(
       :bind => nil, 
-      :pop  => :queue_empty
-    )
+      :pop  => :queue_empty).by_default
     
     @transport = Thrift::AMQP::Transport.new(exchange, queue)
   end
@@ -48,11 +46,11 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
     @exchange = flexmock(:exchange)
     @queue = flexmock(:queue)
     
-    set_defaults(queue, 
-      :bind => nil)
+    queue.should_receive(
+      :bind => nil).by_default
     
-    set_defaults(exchange, 
-      :name => 'exchange')
+    exchange.should_receive(
+      :name => 'exchange').by_default
   end
   
   context 'connected' do

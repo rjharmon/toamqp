@@ -13,19 +13,7 @@ describe "AMQP Transport Integration (oneway)" do
   EXCHANGE_NAME = 'integration_spec_oneway'
   attr_reader :connection
   before(:each) do
-    @connection_credentials = {
-      :host => 'localhost', 
-      :vhost => '/'
-    }
-    
-    filename = PROJECT_BASE + "/connection.yml"
-    if File.exist?(filename)
-      settings = YAML.load(File.read(filename))
-      
-      @connection_credentials = HashWithIndifferentAccess.new(settings)[:connection]
-    end
-    
-    @connection = Thrift::AMQP.start(@connection_credentials)
+    @connection = connect_for_integration_test
   end
   
   # Sets up a client for the given header filter. 
