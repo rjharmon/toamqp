@@ -15,19 +15,24 @@ h2. SYNOPSIS
 
 Using the following interface definition: 
 
+<pre><code>
   service AwesomeService {
     // a little hommage 
     oneway void battleCry(1:string battlecry);
   }
+</code></pre>
   
 Create a connection to your AMQP server: 
 
+<pre><code>
   connection = Thrift::AMQP.start(
     :host => 'mq.mydomain.com
   )
+</code></pre>
 
 On the server (consumer of messages): 
 
+<pre><code>
   class MyAwesomeHandler
     def battleCry(message)
       puts messages
@@ -42,29 +47,36 @@ On the server (consumer of messages):
   server = Thrift::SimpleServer.new(processor, transport)
   
   server.serve    # never returns
+</code></pre>
 
 On the client: 
 
+<pre><code>
   service = connection.service('battle_cry')
   transport = service.transport
   protocol = Thrift::BinaryProtocol.new(transport)
   client = AwesomeService::Client.new(protocol)
   
   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
+</code></pre>
 
 h2. SPECIFICATION
 
 To run the specs, just type
 
-  rake specs
+<pre><code>
+  $ rake specs
+</code></pre>
   
 Integration tests need a AMQP-Server to run on localhost. This has so far only
 been tested with RabbitMQ. (http://www.rabbitmq.com/) Alternatively, you may
 specify the location of your AMQP-Server by filling in connection.yml in the
 project's root.
 
-  rake thrift
-  rake integration
+<pre><code>
+  $ rake thrift
+  $ rake integration
+</code></pre>
   
 h2. REQUIREMENTS
 
