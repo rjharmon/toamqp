@@ -1,3 +1,10 @@
+$:.unshift File.dirname(__FILE__) + "/gen-rb"
+begin
+  require 'test'
+rescue LoadError
+  puts "No test interface found. Maybe you should run 'rake thrift' first?"
+end
+
 # A handler class that will help with testing. 
 #
 class SpecHandler
@@ -30,7 +37,7 @@ class SpecTestServer
   
   # Spins the server and makes it read the next +message_count+ messages.
   #
-  def spin_server
+  def spin
     @server_transport.listen
     client = @server_transport.accept
     prot = Thrift::BinaryProtocol.new(client)

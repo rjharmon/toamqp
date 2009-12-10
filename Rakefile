@@ -31,9 +31,9 @@ Spec::Rake::SpecTask.new('spec:all') do |t|
 end
 
 
-compile_integration = file 'spec/integration/gen-rb/test.rb' => %w(spec/integration/test.thrift) do
-  rm_rf 'spec/integration/gen-rb' rescue nil
-  sh %Q{thrift --gen rb -o spec/integration spec/integration/test.thrift }
+compile_integration = file 'spec/support/gen-rb/test.rb' => %w(spec/support/test.thrift) do
+  rm_rf 'spec/support/gen-rb' rescue nil
+  sh %Q{thrift --gen rb -o spec/support spec/support  /test.thrift }
 end
 
 desc "Compiles thrift IDL definitions into Ruby code."

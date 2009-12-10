@@ -1,15 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-require 'active_support'
-
 require 'support/spec_test_server'
-
-$:.unshift File.dirname(__FILE__) + "/gen-rb"
-begin
-  require 'test'
-rescue LoadError
-  puts "No test interface found. Maybe you should run 'rake thrift' first?"
-end
 
 describe "AMQP Transport Integration (oneway)" do
   include AMQPHelpers
@@ -35,7 +26,7 @@ describe "AMQP Transport Integration (oneway)" do
     it "should successfully send a message" do
       client.sendMessage("a message")
   
-      server.spin_server
+      server.spin
       server.handler.messages.should include('a message')
     end 
     it "should send several messages" do
@@ -43,7 +34,7 @@ describe "AMQP Transport Integration (oneway)" do
         client.sendMessage("a message (#{i})")
       end
   
-      server.spin_server
+      server.spin
       server.handler.messages.should have(10).messages
     end 
     context "with a second server" do
@@ -61,8 +52,8 @@ describe "AMQP Transport Integration (oneway)" do
           client.sendMessage("a message (#{i})")
         end
   
-        server.spin_server
-        second_server.spin_server
+        server.spin
+        second_server.spin
         
         messages = server.handler.messages + second_server.handler.messages
         10.times do |i|
@@ -91,8 +82,8 @@ describe "AMQP Transport Integration (oneway)" do
         dog_client.sendMessage("wuff")
         
         # Cat goes first, if filter is ineffective, messages will end up on cat.
-        cat_server.spin_server
-        dog_server.spin_server
+        cat_server.spin
+        dog_server.spin
       end
       
       it "should be received by dog" do

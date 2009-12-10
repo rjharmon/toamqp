@@ -1,4 +1,6 @@
 
+require 'active_support'
+
 module AMQPHelpers
   # Centralizing the code that connects to AMQP server during test. This
   # returns a Connection instance.
