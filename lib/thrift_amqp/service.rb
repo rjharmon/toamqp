@@ -58,7 +58,14 @@ class Thrift::AMQP::Service
   #   client.battleCry('chunky bacon!')   
   #
   def client_transport(filter={})
-    Thrift::AMQP::Transport.new(exchange, nil, stringify(filter))
+    # Twoway clients will have a private queue that receives answers
+    private_queue = if twoway?
+      Thrift::AMQP::PrivateEndpoint.
+        new(@connection, exchange, @name).
+        queue
+    end
+    
+    Thrift::AMQP::Transport.new(exchange, private_queue, stringify(filter))
   end
   
   # Creates a service endpoint. This must be used to create a place for
@@ -122,99 +129,11 @@ class Thrift::AMQP::Service
       hash
     }
   end
-end
 
-class Thrift::AMQP::BaseEndpoint
-  # The queue name that will be used for all transports generated using
-  # this endpoint. 
+  # Returns true if this service has been constructed to communicate both
+  # ways.
   #
-  attr_reader :queue_name
-
-  def initialize(connection, exchange, exchange_name)
-    @connection = connection
-    @exchange = exchange
-    @exchange_name = exchange_name
-  end
-
-  # Produces a transport for use with thrift. See Thrift::AMQP::Service for
-  # documentation on #transport. 
-  #
-  def transport
-    raise "Please initialize @queue in your subclass' constructor" unless defined?(@queue)
-    
-    Thrift::AMQP::ServerTransport.new(@exchange, @queue)
-  end
-end
-
-
-# An AMQP endpoint maps to a server of a thrift service. The client makes 
-# requests on the service and the server connects to a service endpoint.
-#
-class Thrift::AMQP::Endpoint < Thrift::AMQP::BaseEndpoint
-  def initialize(connection, exchange, exchange_name, headers)
-    super(connection, exchange, exchange_name)
-    
-    @queue = _create_queue(headers)
-  end
-  
-  def _create_queue(filter)
-    @queue_name = _public_endpoint_name(@exchange_name, filter)
-    
-    queue = @connection.queue(
-      queue_name, 
-      :auto_delete => true)
-
-    if filter.empty?
-      queue.bind(@exchange)
-    else
-      queue.bind(@exchange, 
-        :arguments => filter.merge('x-match'=>'all'))
-    end
-
-    queue
-  end
-  
-  def _public_endpoint_name(base_name, filter)
-    [
-      base_name,
-      filter.to_a.sort.
-        map { |(k,v)| "#{k}_#{v}" }
-    ].flatten.join('_')
-  end
-end
-
-# An AMQP endpoint maps to a server of a thrift service. The client makes 
-# requests on the service and the server connects to a service endpoint.
-#
-# The private endpoint cannot be guessed by other processes and will be 
-# unique to this process. This disables mechanisms like round-robin load 
-# balancing, but allows you to receive answers for your requests privately 
-# or have a message be distributed to all listeners (broadcast).
-#
-class Thrift::AMQP::PrivateEndpoint < Thrift::AMQP::BaseEndpoint
-  def initialize(connection, exchange, exchange_name)
-    super(connection, exchange, exchange_name)
-
-    @uuid = UUID.new
-    @queue = _create_queue
-  end
-  
-  def _create_queue
-    @queue_name = _private_endpoint_name(@exchange_name)
-    
-    queue = @connection.queue(
-      queue_name, 
-      :auto_delete => true)
-      
-    queue.bind(@exchange)
-      
-    queue
-  end
-  
-  def _private_endpoint_name(base_name) 
-    [
-      base_name, 
-      'private', 
-      @uuid.generate].join('_')
+  def twoway?
+    @twoway
   end
 end

@@ -6,18 +6,18 @@ describe "AMQP Transport Integration (oneway)" do
   include AMQPHelpers
   
   EXCHANGE_NAME = 'integration_spec_oneway'
-  attr_reader :connection
+  attr_reader :service
   before(:each) do
-    @connection = connect_for_integration_test
+    @service = connect_service(EXCHANGE_NAME)
   end
     
   context 'with a server in the background' do
     attr_reader :server, :client
     before(:each) do
       # Server setup
-      @server = SpecTestServer.new(connection)
+      @server = SpecTestServer.new(service)
       
-      @client = client_for()
+      @client = client_for(service)
     end
     after(:each) do
       @server.close
@@ -41,7 +41,7 @@ describe "AMQP Transport Integration (oneway)" do
       attr_reader :second_server
       before(:each) do
         # Server setup
-        @second_server = SpecTestServer.new(connection)
+        @second_server = SpecTestServer.new(service)
       end
       after(:each) do
         second_server.close
@@ -67,10 +67,10 @@ describe "AMQP Transport Integration (oneway)" do
     attr_reader :dog_client, :cat_client
     before(:each) do
       @dog_server, @cat_server = [:dog, :cat].
-        map { |type| SpecTestServer.new(connection, false, :type => type) }
+        map { |type| SpecTestServer.new(service, :type => type) }
         
       @dog_client, @cat_client = [:dog, :cat].
-        map { |type| client_for(:type => type) }
+        map { |type| client_for(service, :type => type) }
     end
     after(:each) do
       dog_server.close

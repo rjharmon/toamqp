@@ -5,7 +5,9 @@ module AMQPHelpers
   # Centralizing the code that connects to AMQP server during test. This
   # returns a Connection instance.
   #
-  def connect_for_integration_test
+  def connect_service(name, opts={})
+    twoway = opts[:twoway] || false
+    
     connection_credentials = {
       :host => 'localhost', 
       :vhost => '/'
@@ -18,14 +20,14 @@ module AMQPHelpers
       connection_credentials = HashWithIndifferentAccess.new(settings)[:connection]
     end
   
-    Thrift::AMQP.start(connection_credentials)
+    Thrift::AMQP.start(connection_credentials).
+      service(name, twoway)
   end
 
-  # Sets up a client for the given header filter. 
+  # Sets up a oneway client for the given header filter. 
   #
-  def client_for(headers={})
+  def client_for(service, headers={})
     begin
-      service = connection.service(EXCHANGE_NAME)
       transport = service.client_transport(headers)
       protocol = Thrift::BinaryProtocol.new(transport)
       

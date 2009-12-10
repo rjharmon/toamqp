@@ -26,6 +26,7 @@ module Thrift
   end
 end
 
+require 'thrift_amqp/endpoints'
 require 'thrift_amqp/service'
 require 'thrift_amqp/server_transport'
 require 'thrift_amqp/transport'

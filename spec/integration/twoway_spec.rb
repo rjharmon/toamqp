@@ -13,24 +13,29 @@ require 'support/spec_test_server'
 
 describe "AMQP Transport Integration (twoway)" do
   include AMQPHelpers
+  include CustomMatchers
   
-  EXCHANGE_NAME = 'integration_spec_twoway'
-  attr_reader :connection
+  attr_reader :service
   before(:each) do
-    @connection = connect_for_integration_test
+    @service = connect_service('integration_spec_twoway', :twoway => true)
   end
   
   describe "public 'capitalize' service" do
     attr_reader :server, :client
     before(:each) do
-      @server = SpecTestServer.new(connection, true)
-      @client = client_for()
+      @server = SpecTestServer.new(service)
+      @client = client_for(service)
+    end
+    after(:each) do
+      server.close
     end
     
     context "when sent 'foo'" do
       attr_reader :result
       before(:each) do
-        @result = client.capitalize('foo')
+        lambda {
+          @result = client.capitalize('foo')
+        }.should take_less_than(0.5).seconds
       end
       
       it "should return 'FOO'" do

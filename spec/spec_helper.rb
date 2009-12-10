@@ -20,6 +20,7 @@ Spec::Runner.configure do |config|
 end
 
 require 'support/connection'
+require 'support/custom_matchers'
 
 require 'pp'
 class EscapedOut < StringIO
