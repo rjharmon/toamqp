@@ -21,9 +21,9 @@ describe "AMQP Transport Integration (twoway)" do
   end
   
   describe "public 'capitalize' service" do
-    attr_reader :server
+    attr_reader :server, :client
     before(:each) do
-      @server = SpecTestServer.new(connection)
+      @server = SpecTestServer.new(connection, true)
       @client = client_for()
     end
     

@@ -26,7 +26,7 @@ module AMQPHelpers
   def client_for(headers={})
     begin
       service = connection.service(EXCHANGE_NAME)
-      transport = service.transport(headers)
+      transport = service.client_transport(headers)
       protocol = Thrift::BinaryProtocol.new(transport)
       
       Test::Client.new(protocol)

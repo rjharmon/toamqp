@@ -67,7 +67,7 @@ describe "AMQP Transport Integration (oneway)" do
     attr_reader :dog_client, :cat_client
     before(:each) do
       @dog_server, @cat_server = [:dog, :cat].
-        map { |type| SpecTestServer.new(connection, :type => type) }
+        map { |type| SpecTestServer.new(connection, false, :type => type) }
         
       @dog_client, @cat_client = [:dog, :cat].
         map { |type| client_for(:type => type) }

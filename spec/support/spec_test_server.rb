@@ -29,10 +29,13 @@ class SpecTestServer
   
   # Creates a test server that will process messages and then quit. 
   #
-  def initialize(connection, headers = {})
+  def initialize(connection, twoway=false, headers = {})
     @handler = SpecHandler.new()
     @processor = Test::Processor.new(handler)
-    @server_transport = connection.service(EXCHANGE_NAME).endpoint(headers).transport
+    @server_transport = connection.
+      service(EXCHANGE_NAME, twoway).
+      endpoint(headers).
+      transport
   end
   
   # Spins the server and makes it read the next +message_count+ messages.

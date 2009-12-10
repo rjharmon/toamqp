@@ -35,23 +35,29 @@ class Thrift::AMQP::Service
   #
   attr_reader :exchange
   
-  def initialize(connection, name)
+  # Creates a new service based on the +connection+ given. If twoway is set
+  # to true, construction will return objects that listen for replies and 
+  # return demarshalled values. 
+  #
+  def initialize(connection, name, twoway=false)
     @connection = connection
     @name = name
     @exchange = _create_exchange(name)
+    @twoway = twoway
   end
   
-  # Creates and returns a client transport for the given service. Use this 
+  # Creates and returns a client transport for the given service. Use this
   # transport for initializing your thrift stack. 
   #
   # Example: 
   #
-  #   protocol = Thrift::BinaryProtocol.new(service.transport)
+  #   protocol = Thrift::BinaryProtocol.new(service.client_transport)
   #   client = AwesomeService::Client.new(protocol)
   #
-  #   client.battleCry('chunky bacon!')   # prints 'chunky bacon!' on the server
+  #   # prints 'chunky bacon!' on the server
+  #   client.battleCry('chunky bacon!')   
   #
-  def transport(filter={})
+  def client_transport(filter={})
     Thrift::AMQP::Transport.new(exchange, nil, stringify(filter))
   end
   
@@ -94,7 +100,7 @@ class Thrift::AMQP::Service
   #   server = Thrift::SimpleServer.new(processor, transport)
   #
   # This connects the server to something like SERVICE_NAME_PRIVATE_UUID. 
-  #    
+  #     
   def private_endpoint
     Thrift::AMQP::PrivateEndpoint.new(
       @connection, 

@@ -32,7 +32,7 @@ class Thrift::AMQP::Connection
   
   # Creates a service.
   #
-  def service(name)
-    Thrift::AMQP::Service.new(connection, name)
+  def service(name, twoway=false)
+    Thrift::AMQP::Service.new(connection, name, twoway)
   end
 end

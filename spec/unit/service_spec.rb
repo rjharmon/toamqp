@@ -99,10 +99,10 @@ describe Thrift::AMQP::Connection do
       end
     end
 
-    describe "#transport" do
+    describe "#client_transport" do
       attr_reader :transport
       before(:each) do
-        @transport = service.transport
+        @transport = service.client_transport
       end
       
       it "should connect to exchange 'service_name'" do
