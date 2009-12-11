@@ -11,10 +11,11 @@ describe Thrift::AMQP::Transport, 'when constructed with an exchange (server)' d
     
     # Stub an interface for the queue
     queue.should_receive(
+      :name => 'queue_name',
       :bind => nil, 
       :pop  => :queue_empty).by_default
     
-    @transport = Thrift::AMQP::Transport.new(exchange, queue)
+    @transport = Thrift::AMQP::Transport.new(:connection, exchange, queue)
   end
   
   describe "#read(sz)" do
@@ -47,6 +48,7 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
     @queue = flexmock(:queue)
     
     queue.should_receive(
+      :name => 'queue_name',
       :bind => nil).by_default
     
     exchange.should_receive(
@@ -56,13 +58,13 @@ describe Thrift::AMQP::Transport, 'when using .connect (client)' do
   context 'connected' do
     attr_reader :transport
     before(:each) do
-      @transport = Thrift::AMQP::Transport.new(exchange, queue, :foo => :bar)
+      @transport = Thrift::AMQP::Transport.new(:connection, exchange, queue, :foo => :bar)
     end
     
     describe "write(buffer)" do
       it "should publish messages to the exchange" do
         exchange.should_receive(:publish).
-          with("some message (encoded by thrift)", :headers => {:foo => :bar}).
+          with("some message (encoded by thrift)", :headers => {:foo => :bar, "thrift_reply_to" => 'queue_name'}).
           once
 
         transport.write("some message (encoded by thrift)")
