@@ -9,6 +9,7 @@ describe Thrift::AMQP::ServerTransport do
       @exchange = flexmock(:exchange)
       @queue    = flexmock(:queue)
       @transport = Thrift::AMQP::ServerTransport.new(
+        :connection, 
         exchange, 
         queue)
         
