@@ -65,7 +65,7 @@ class Thrift::AMQP::Service
         queue
     end
     
-    Thrift::AMQP::Transport.new(exchange, private_queue, stringify(filter))
+    Thrift::AMQP::Transport.new(@connection, exchange, private_queue, stringify(filter))
   end
   
   # Creates a service endpoint. This must be used to create a place for

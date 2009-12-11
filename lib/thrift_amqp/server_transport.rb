@@ -8,14 +8,15 @@ class Thrift::AMQP::ServerTransport < Thrift::BaseServerTransport
   # Initializes a connection to the AMQP queue. If you provide a headers 
   # argument, only messages that match ALL headers will be accepted. 
   #
-  def initialize(exchange, queue)
+  def initialize(connection, exchange, queue)
+    @connection = connection
     @exchange = exchange
     @queue = queue
   end
   
   # Part of the server 
   def listen
-    @transport = Thrift::AMQP::Transport.new(@exchange, @queue)
+    @transport = Thrift::AMQP::Transport.new(@connection, nil, @queue)
   end
 
   def accept

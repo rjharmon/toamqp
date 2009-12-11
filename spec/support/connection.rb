@@ -35,7 +35,7 @@ module AMQPHelpers
     rescue Bunny::ServerDownError
       raise "Could not connect - is your local RabbitMQ running?"
     ensure 
-      transport.open
+      transport.open if transport
     end
   end
 end

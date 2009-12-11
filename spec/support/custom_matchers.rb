@@ -22,7 +22,7 @@ module CustomMatchers
           given.call
         end
         
-        return true
+        true
       rescue Timeout::Error
         false
       end

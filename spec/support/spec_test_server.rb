@@ -27,7 +27,7 @@ end
 class SpecTestServer 
   attr_reader :handler
   
-  # Creates a test server that will process messages and then quit. 
+  # Creates a test server that will process messages and then quit. 
   #
   def initialize(service, headers = {})
     @handler = SpecHandler.new()
