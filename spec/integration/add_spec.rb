@@ -1,5 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
+require 'toamqp/server'
+require 'toamqp/client'
+
 describe "Server of test service" do
   class TestService < TOAMQP::Service::Base
     exchange :test
@@ -13,7 +16,7 @@ describe "Server of test service" do
   
   attr_reader :server, :client
   before(:each) do
-    @server = TOAMQP::Server.create(TestService.new, SpecSupport::TestServer)
+    @server = TOAMQP::Server.create(TestService.new)
     @client = TOAMQP::Client.new('test', Test)
   end
   

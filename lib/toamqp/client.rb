@@ -1,0 +1,4 @@
+
+class TOAMQP::Client
+  
+end

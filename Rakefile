@@ -19,21 +19,21 @@ Spec::Rake::SpecTask.new('spec:unit') do |t|
 end
 
 desc "Runs all integration examples."
-Spec::Rake::SpecTask.new('spec:integration') do |t|
+Spec::Rake::SpecTask.new('spec:integration' => :thrift) do |t|
   t.spec_files = FileList['spec/integration/*_spec.rb']
   t.spec_opts = ['--options', 'spec/spec.opts']
 end
 
 desc "Runs all examples."
-Spec::Rake::SpecTask.new('spec:all') do |t|
+Spec::Rake::SpecTask.new('spec:all' => :thrift) do |t|
   t.spec_files = FileList['spec/**/*_spec.rb']
   t.spec_opts = ['--options', 'spec/spec.opts']
 end
 
 
-compile_integration = file 'spec/support/gen-rb/test.rb' => %w(spec/support/test.thrift) do
-  rm_rf 'spec/support/gen-rb' rescue nil
-  sh %Q{thrift --gen rb -o spec/support spec/support  /test.thrift }
+compile_integration = file 'spec/integration/protocol/gen-rb/test.rb' => %w(spec/integration/protocol/test.thrift) do
+  rm_rf 'spec/integration/protocol/gen-rb' rescue nil
+  sh %Q{thrift --gen rb -o spec/integration/protocol spec/integration/protocol/test.thrift }
 end
 
 desc "Compiles thrift IDL definitions into Ruby code."
