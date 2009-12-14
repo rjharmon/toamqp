@@ -1,5 +1,7 @@
 h1. Thrift AMQP transport
 
+(Currently undergoing a major transformation, see the redesign branch.)
+
 h2. DESCRIPTION
 
 Transports thrift messages over a the advanced message queue protocol. (AMQP)
@@ -77,7 +79,7 @@ project's root.
   $ rake thrift
   $ rake integration
 </code></pre>
-  
+
 h2. REQUIREMENTS
 
 rabbitmq-server: local server for integration tests
