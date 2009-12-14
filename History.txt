@@ -1,3 +1,9 @@
+=== 0.2
+
+* New API that allows clearly expressing intent.
+
+* The oneway limitation falls: bidirectional communication becomes possible. 
+
 === 0.1.1 / ???
 
 * Service point abstraction over exchanges and queues. 
