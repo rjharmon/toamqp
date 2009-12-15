@@ -20,7 +20,7 @@ describe "Server of test service" do
   
   attr_reader :server, :client
   before(:each) do
-    @server = TOAMQP::Server.create(TestService.new)
+    @server = TOAMQP::Server.new(TestService.new)
     @client = TOAMQP::Client.new('test', Test)
   end
   
@@ -39,17 +39,25 @@ describe "Server of test service" do
       # Since we didn't wait for the server, it didn't do the work.
       received_messages.should be_empty
     end
+    context "server" do
+      it "should receive the call" do
+        flexmock(server).
+          should_receive(:announce).once
+        
+        client.announce('foo')
+      end 
+    end
   end
   context "twoway #add" do
     context "call with (13, 29)" do
       def call
         client.add(13, 29)
       end
-      
+
       it "should return 42" do
         pending 'simple case'
         call.should == 42
       end 
     end
-  end
+  end    
 end

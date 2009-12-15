@@ -1,7 +1,4 @@
 class TOAMQP::Server
-  
-  class << self # CLASS METHODS
-    def create(service)
-    end
+  def initialize(service)
   end
 end
