@@ -3,6 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp/server'
 require 'toamqp/client'
 
+$:.unshift File.join(
+  File.dirname(__FILE__), 'protocol/gen-rb')
+require 'test'
+
 describe "Server of test service" do
   class TestService < TOAMQP::Service::Base
     exchange :test
@@ -28,6 +32,7 @@ describe "Server of test service" do
       received_messages.should include('foo')
     end
     it "should return without waiting for answer (asynchronous operation)" do
+      pending 'simple case'
       client.announce('foo')
       client.announce('bar')
 
@@ -42,6 +47,7 @@ describe "Server of test service" do
       end
       
       it "should return 42" do
+        pending 'simple case'
         call.should == 42
       end 
     end

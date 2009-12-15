@@ -5,3 +5,4 @@ module TOAMQP;
 end
 
 require 'toamqp/service/base'
+require 'toamqp/connection_manager'
