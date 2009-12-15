@@ -22,6 +22,12 @@ describe TOAMQP::Client do
     end 
     it "should return a thrift client proxy" do
       call.should be_an_instance_of(ThriftModule::Client)
+    end
+    it "should initialize the client with a Thrift::BinaryProtocol instance" do
+      flexmock(ThriftModule::Client).
+        should_receive(:new).with(Thrift::BinaryProtocol)
+        
+      call
     end 
   end
 end
