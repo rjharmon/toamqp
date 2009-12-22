@@ -8,7 +8,7 @@ class SpecServer < Thrift::BaseServer
   def serve
     begin
       @server_transport.listen
-      loop do
+      while not @server_transport.eof?
         client = @server_transport.accept
         trans = @transport_factory.get_transport(client)
         prot = @protocol_factory.get_protocol(trans)

@@ -3,9 +3,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp'
 
 describe TOAMQP::ServerTransport do
-  attr_reader :transport
+  attr_reader :transport, :queue
   before(:each) do
-    @transport = TOAMQP::ServerTransport.new
+    @queue = flexmock(:queue)
+    
+    queue.should_receive(
+      :message_count => 0).by_default 
+    
+    @transport = TOAMQP::ServerTransport.new(queue)
+  end
+  
+  describe "#eof?" do
+    it "should be true" do
+      transport.should be_eof
+    end 
   end
   
   describe "#listen" do
@@ -14,10 +25,21 @@ describe TOAMQP::ServerTransport do
     end
   end
   describe "#accept" do
-    it "should allow calling" do
-      transport.accept
+    it "should block" do
+      block_exception = Class.new(Exception)
+      queue.should_receive(:subscribe).and_raise(block_exception)
+      
+      lambda {
+        transport.accept
+      }.should raise_error(block_exception)
     end
-    context "return value" do
+    context "return value when a message is posted" do
+      before(:each) do
+        queue.
+          should_receive(:subscribe).and_yield(
+            :payload => 'buffer'
+          )
+      end
       def call
         transport.accept
       end
