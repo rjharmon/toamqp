@@ -1,8 +1,6 @@
 
 require 'toamqp/transport'
 
-require 'toamqp/target/exchange'
-
 # Bridges thrift to AMQP. 
 #
 class TOAMQP::Bridge

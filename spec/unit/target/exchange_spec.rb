@@ -1,8 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'toamqp'
-require 'toamqp'
-require 'toamqp/target/exchange'
 
 describe TOAMQP::Target::Exchange do
   attr_reader :target, :exchange
