@@ -1,14 +1,35 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-require 'toamqp/server'
-require 'toamqp/client'
-
 $:.unshift File.join(
   File.dirname(__FILE__), 'protocol/gen-rb')
 require 'test'
 
+class SpecServer < Thrift::BaseServer
+  def serve
+    begin
+      @server_transport.listen
+      loop do
+        client = @server_transport.accept
+        trans = @transport_factory.get_transport(client)
+        prot = @protocol_factory.get_protocol(trans)
+        begin
+          loop do
+            @processor.process(prot, prot)
+          end
+        rescue Thrift::TransportException, Thrift::ProtocolException
+        ensure
+          trans.close
+        end
+      end
+    ensure
+      @server_transport.close
+    end
+  end
+end
+
 describe "Server of test service" do
   class TestService < TOAMQP::Service::Base
+    serves Test
     exchange :test
     
     def announce(msg)
@@ -20,14 +41,14 @@ describe "Server of test service" do
   
   attr_reader :server, :client
   before(:each) do
-    @server = TOAMQP::Server.new(TestService.new)
-    @client = TOAMQP::Client.new('test', Test)
+    @server = TOAMQP.server(TestService.new, SpecServer)
+    @client = TOAMQP.client('test', Test)
   end
   
   context "oneway #announce" do
     it "should transmit message" do
       client.announce('foo')
-      server.run_until_queue_empty
+      server.serve
 
       received_messages.should include('foo')
     end

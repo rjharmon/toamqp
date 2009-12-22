@@ -4,7 +4,7 @@ $:.unshift File.join(
   File.dirname(__FILE__), 'protocol/gen-rb')
 require 'test'
 
-require 'toamqp/client'
+require 'toamqp'
 
 describe "Client" do
   attr_reader :client
@@ -18,7 +18,7 @@ describe "Client" do
     
     queue.bind(exchange)
     
-    @client = TOAMQP::Client.new('test', Test)
+    @client = TOAMQP.client('test', Test)
   end
   after(:each) do
     # Pop off remaining messages

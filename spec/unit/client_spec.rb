@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-require 'toamqp/client'
+require 'toamqp'
 
-describe TOAMQP::Client do
+describe "TOAMQP::Client" do
   module ThriftModule
     class Client
       def initialize(protocol); end
@@ -17,7 +17,7 @@ describe TOAMQP::Client do
     end
     
     def call
-      TOAMQP::Client.new('test', ThriftModule)
+      TOAMQP.client('test', ThriftModule)
     end
     
     it "should obtain a connection from TOAMQP" do

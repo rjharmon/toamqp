@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-require 'toamqp/client'
+require 'toamqp'
 
 describe TOAMQP::Bridge do
   attr_reader :connection
