@@ -10,13 +10,20 @@ describe TOAMQP::Client do
   end
   
   describe "#initialize" do
+    attr_reader :connection
+    before(:each) do
+      @connection = flexmock(:connection, 
+        :exchange => flexmock(:exchange))
+    end
+    
     def call
       TOAMQP::Client.new('test', ThriftModule)
     end
     
     it "should obtain a connection from TOAMQP" do
       flexmock(TOAMQP). 
-        should_receive(:spawn_connection).once
+        should_receive(:spawn_connection).once.
+        and_return(connection)
         
       call
     end 

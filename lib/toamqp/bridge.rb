@@ -1,12 +1,19 @@
 
+require 'toamqp/transport'
+
+require 'toamqp/target/exchange'
+
 # Bridges thrift to AMQP. 
 #
 class TOAMQP::Bridge
+  attr_reader :connection, :exchange_name
   
   # Creates a bridge instance that will use the given +connection+ and send
   # outgoing messages to the service listening to +exchange_name+. 
   #
   def initialize(connection, exchange_name)
+    @connection = connection
+    @exchange_name = exchange_name
   end
   
   # Creates and returns a Thrift::BinaryProtocol instance that is connected
@@ -29,5 +36,11 @@ class TOAMQP::Bridge
     # client_dest2 = Target::Queue.new(private_queue_name)
     # 
     # server_dest = Target::Queue.new(reply_queue_name)
+    
+    exchange = connection.exchange(exchange_name)
+    
+    destination = TOAMQP::Target::Exchange.new(exchange)
+    TOAMQP::Transport.new(
+      :destination => destination)
   end
 end
