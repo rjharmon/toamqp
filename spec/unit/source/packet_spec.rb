@@ -22,5 +22,11 @@ describe TOAMQP::Source::Packet do
     it "should return the buffer" do
       packet.read(1000).should == buffer
     end 
+    it "should raise Thrift::TransportException" do
+      packet.read(1000)
+      lambda {
+        packet.read(1)
+      }.should raise_error(Thrift::TransportException)
+    end 
   end
 end

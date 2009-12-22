@@ -26,6 +26,7 @@ class TOAMQP::Transport < Thrift::BaseTransport
     :read
   
   # Closes the transport and its resources
+  #
   def close
   end
 end

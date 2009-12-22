@@ -10,6 +10,7 @@ module TOAMQP::Source
     end
     
     def read(count)
+      raise Thrift::TransportException if @io.eof?
       @io.read(count)
     end
   end

@@ -20,6 +20,7 @@ class TOAMQP::Service::Base
   # Returns a thrift processor for this service. 
   #
   def thrift_processor
+    
     thrift_module_constant('Processor').new(self)
   end
   
