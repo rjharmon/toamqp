@@ -28,4 +28,7 @@ end
 require 'toamqp/service/base'
 require 'toamqp/connection_manager'
 
+require 'toamqp/server_transport'
+
 require 'toamqp/bridge'
+require 'toamqp/sources'

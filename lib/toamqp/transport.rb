@@ -4,6 +4,7 @@ class TOAMQP::Transport
   extend Forwardable
   
   attr_reader :destination
+  attr_reader :source
   
   # Initializes an AMQP transport. 
   #
@@ -13,6 +14,7 @@ class TOAMQP::Transport
   #
   def initialize(options={})
     @destination = options[:destination]
+    @source = options[:source]
   end
 
   def_delegators :destination, 

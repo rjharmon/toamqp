@@ -8,8 +8,22 @@ describe TOAMQP::Transport do
     destination = flexmock(:destination)
     destination.should_ignore_missing
     
+    source = flexmock(:source)
+    
     @transport = TOAMQP::Transport.new(
+      :source => source,
       :destination => destination)
+  end
+  
+  describe "#source" do
+    it "should not be nil" do
+      transport.source.should_not be_nil
+    end 
+  end
+  describe "#destination" do
+    it "should not be nil" do
+      transport.destination.should_not be_nil
+    end 
   end
   
   describe "#write" do

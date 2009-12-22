@@ -18,7 +18,7 @@ class TOAMQP::Service::Base
   # Returns a server transport for this service.
   #
   def server_transport
-    
+    TOAMQP::ServerTransport.new()
   end
   
   class << self # CLASS METHODS

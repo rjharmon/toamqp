@@ -23,6 +23,11 @@ describe TOAMQP::Service::Base do
         instance.thrift_processor.should be_a_kind_of(Thrift::Processor)
       end
     end
+    describe "#server_transport" do
+      it "should return a ServerTransport" do
+        instance.server_transport.should be_an_instance_of(TOAMQP::ServerTransport)
+      end 
+    end
   end
   
   
