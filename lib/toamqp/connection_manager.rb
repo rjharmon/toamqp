@@ -32,6 +32,14 @@ class TOAMQP::ConnectionManager
   def connect
     @connection = Bunny.new(connection_attributes)
     @connection.start
+    
+    # NOTE: This is a super undocumented feature that you will probably know
+    # about only from reading AMQP specs. If we want to subscribe, but abort
+    # subscription before all messages are read, we need to turn this on, otherwise
+    # the server will go on and deliver all remaining messages in turn. See also
+    # the :ack => true flag in ServerTransport...
+    # 23Dez09, ksc
+    @connection.qos
 
     @connection
   end

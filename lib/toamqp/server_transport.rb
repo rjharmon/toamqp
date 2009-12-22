@@ -27,12 +27,16 @@ class TOAMQP::ServerTransport
   # used for communication with that client. 
   #
   def accept
-    @queue.subscribe do |message|
-      packet = message[:payload]
-
-      return TOAMQP::Transport.new(
-        :source => TOAMQP::Source::Packet.new(packet))
+    # Wait for a message to arrive
+    message = nil
+    @queue.subscribe(:message_max => 1, :ack => true) do |message|      
+      # DON'T return from here, it will hit a bug in Bunny
     end
+    
+    packet = message[:payload]
+    
+    return TOAMQP::Transport.new(
+      :source => TOAMQP::Source::Packet.new(packet))
   end
 
   # Closes all connections

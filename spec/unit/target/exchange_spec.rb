@@ -33,6 +33,10 @@ describe TOAMQP::Target::Exchange do
 
         target.flush
       end 
+      it "should have an empty buffer after flush" do
+        target.flush
+        target.buffer.should be_empty
+      end 
     end
   end
 end

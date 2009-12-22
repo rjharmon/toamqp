@@ -35,7 +35,8 @@ class TOAMQP::Topology
     connection.exchange(exchange_name)
   end
   def produce_queue
-    queue = connection.queue(exchange_name)
+    queue = connection.queue(exchange_name, 
+      :exclusive => false)
     
     queue.bind(exchange)
     

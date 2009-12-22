@@ -16,12 +16,14 @@ class SpecServer < Thrift::BaseServer
           loop do
             @processor.process(prot, prot)
           end
-        rescue Thrift::TransportException, Thrift::ProtocolException
+        rescue Thrift::TransportException, Thrift::ProtocolException => ex
         ensure
           trans.close
         end
       end
-    ensure
+    rescue => bang
+      raise bang
+    else
       @server_transport.close
     end
   end
@@ -46,12 +48,19 @@ describe "Server of test service" do
     end
   end
   
-  attr_reader :server, :client
+  attr_reader :server, :client, :handler
   attr_reader :received_messages
   before(:each) do
     @received_messages = []
-    @server = TOAMQP.server(TestService.new(received_messages), SpecServer)
+    @handler = TestService.new(received_messages)
+    @server = TOAMQP.server(@handler, SpecServer)
     @client = TOAMQP.client('test', Test)
+  end
+  after(:each) do
+    Bunny.run do |conn|
+      queue = conn.queue('test')
+      queue.purge
+    end
   end
   
   context "oneway #announce" do
@@ -68,9 +77,17 @@ describe "Server of test service" do
       # Since we didn't wait for the server, it didn't do the work.
       received_messages.should be_empty
     end
+    it "should transmit hundreds of messages" do
+      200.times do |i|
+        client.announce("message #{i}")
+      end
+      server.serve
+      
+      received_messages.should have(200).messages
+    end 
     context "server" do
       it "should receive the call" do
-        flexmock(server).
+        flexmock(handler).
           should_receive(:announce).once
         
         client.announce('foo')
