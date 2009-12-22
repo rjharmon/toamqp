@@ -33,3 +33,5 @@ require 'toamqp/server_transport'
 require 'toamqp/bridge'
 require 'toamqp/sources'
 require 'toamqp/targets'
+
+require 'toamqp/topology'

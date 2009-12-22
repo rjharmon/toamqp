@@ -1,6 +1,14 @@
 require 'metaid'
 
 class TOAMQP::Service::Base
+  
+  # Creates queues and exchanges and links things up
+  #
+  attr_reader :topology
+  
+  def initialize
+    @topology = TOAMQP::Topology.new
+  end
 
   # Returns a constant from the thrift module that was specified in the 
   # class.
@@ -18,7 +26,13 @@ class TOAMQP::Service::Base
   # Returns a server transport for this service.
   #
   def server_transport
-    TOAMQP::ServerTransport.new()
+    TOAMQP::ServerTransport.new(server_queue)
+  end
+  
+  # Returns the queue to read messages from (servers perspective).
+  #
+  def server_queue
+    topology.queue
   end
   
   class << self # CLASS METHODS

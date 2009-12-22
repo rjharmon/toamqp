@@ -28,7 +28,15 @@ describe TOAMQP::Service::Base do
         instance.server_transport.should be_an_instance_of(TOAMQP::ServerTransport)
       end 
     end
+    describe "#server_queue" do
+      it "should delegate to queue_creator.queue" do
+        topology = flexmock(:topology)
+        flexmock(instance, :topology => topology)
+        
+        topology.should_receive(:queue).once
+        
+        instance.server_queue
+      end 
+    end
   end
-  
-  
 end
