@@ -8,6 +8,9 @@ describe TOAMQP::Target::Exchange do
   attr_reader :target, :exchange
   before(:each) do
     @exchange = flexmock(:exchange)
+    
+    exchange.should_ignore_missing
+    
     @target = TOAMQP::Target::Exchange.new(exchange)
   end
   
@@ -26,11 +29,12 @@ describe TOAMQP::Target::Exchange do
         target.write ' '
         target.write 'message'
       end
+
+      it "should publish the buffered message to the exchange" do
+        exchange.should_receive(:publish).with('some message').once
+
+        target.flush
+      end 
     end
-    it "should publish the buffered message to the exchange" do
-      exchange.should_receive(:publish).with('some message').once
-      
-      target.flush
-    end 
   end
 end

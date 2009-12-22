@@ -13,7 +13,11 @@ describe "Client" do
     mq_conn = Bunny.new
     mq_conn.start
     
+    exchange = mq_conn.exchange('test')
     @queue = mq_conn.queue('test')
+    
+    queue.bind(exchange)
+    
     @client = TOAMQP::Client.new('test', Test)
   end
   after(:each) do
