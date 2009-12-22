@@ -6,7 +6,11 @@ module TOAMQP::Source
   #
   class Packet
     def initialize(buffer)
-      
+      @io = StringIO.new(buffer)
+    end
+    
+    def read(count)
+      @io.read(count)
     end
   end
 end

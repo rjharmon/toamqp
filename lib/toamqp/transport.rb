@@ -1,6 +1,6 @@
 require 'forwardable'
 
-class TOAMQP::Transport
+class TOAMQP::Transport < Thrift::BaseTransport
   extend Forwardable
   
   attr_reader :destination
@@ -17,6 +17,15 @@ class TOAMQP::Transport
     @source = options[:source]
   end
 
+  # Destination interface
   def_delegators :destination, 
     :write, :flush
+    
+  # Source interface
+  def_delegators :source, 
+    :read
+  
+  # Closes the transport and its resources
+  def close
+  end
 end

@@ -9,6 +9,8 @@ describe TOAMQP::Transport do
     destination.should_ignore_missing
     
     source = flexmock(:source)
+    source.should_receive(
+      :read => 'buffer').by_default
     
     @transport = TOAMQP::Transport.new(
       :source => source,
@@ -38,14 +40,23 @@ describe TOAMQP::Transport do
     end 
   end
   describe "#flush" do
-    it "should allow a flush to be called" do
-      transport.flush
-    end 
     it "should delegate flush to the destination" do
       transport.destination.
         should_receive(:flush).once
         
       transport.flush
+    end 
+  end
+
+  describe "#read" do
+    it "should allow reading n bytes" do
+      transport.read(10).should == 'buffer'
+    end 
+  end
+
+  describe "#close" do
+    it "should allow calling" do
+      transport.close
     end 
   end
 end
