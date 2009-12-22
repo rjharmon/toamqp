@@ -7,7 +7,7 @@ class TOAMQP::Service::Base
   attr_reader :topology
   
   def initialize
-    @topology = TOAMQP::Topology.new
+    @topology = self.class.topology
   end
 
   # Returns a constant from the thrift module that was specified in the 
@@ -26,17 +26,12 @@ class TOAMQP::Service::Base
   # Returns a server transport for this service.
   #
   def server_transport
-    TOAMQP::ServerTransport.new(server_queue)
-  end
-  
-  # Returns the queue to read messages from (servers perspective).
-  #
-  def server_queue
-    topology.queue
+    TOAMQP::ServerTransport.new(topology)
   end
   
   class << self # CLASS METHODS
     def exchange(name)
+      @exchange_name = name
     end
     
     def serves(thrift_module)
@@ -44,6 +39,15 @@ class TOAMQP::Service::Base
       meta_def :thrift_module do
         thrift_module
       end
+    end
+    
+    # Uses the configuration you've stored in this class to produce a 
+    # network topology.
+    #
+    def topology
+      connection = TOAMQP.spawn_connection
+
+      TOAMQP::Topology.new(connection, @exchange_name)
     end
   end
 end

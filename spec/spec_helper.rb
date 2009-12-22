@@ -2,6 +2,7 @@ require 'spec'
 
 $:.unshift File.dirname(__FILE__) + '/../lib'
 
+require 'pp'
 require 'toamqp'
 
 unless defined?(PROJECT_BASE)

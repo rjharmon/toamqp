@@ -23,12 +23,16 @@ class TOAMQP::ConnectionManager
   # used anymore - this is at the discretion of the manager. 
   #
   def spawn_connection
-    unless @connection
-      @connection = Bunny.new(connection_attributes)
-      
-      @connection.start
-    end
-    
+    connect
+  end
+
+  # Creates a new connection everytime you call it. This is internally used
+  # by spawn_connection. 
+  #
+  def connect
+    @connection = Bunny.new(connection_attributes)
+    @connection.start
+
     @connection
   end
 end

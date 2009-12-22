@@ -9,13 +9,13 @@ describe TOAMQP::Service::Base do
       end
     end
     
-    class TestService < TOAMQP::Service::Base
+    class ServiceBaseTestService < TOAMQP::Service::Base
       serves Test
     end
     
     attr_reader :instance
     before(:each) do
-      @instance = TestService.new
+      @instance = ServiceBaseTestService.new
     end
     
     describe "#thrift_processor" do
@@ -26,16 +26,6 @@ describe TOAMQP::Service::Base do
     describe "#server_transport" do
       it "should return a ServerTransport" do
         instance.server_transport.should be_an_instance_of(TOAMQP::ServerTransport)
-      end 
-    end
-    describe "#server_queue" do
-      it "should delegate to queue_creator.queue" do
-        topology = flexmock(:topology)
-        flexmock(instance, :topology => topology)
-        
-        topology.should_receive(:queue).once
-        
-        instance.server_queue
       end 
     end
   end

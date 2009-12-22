@@ -18,7 +18,7 @@ module TOAMQP;
   def server(service, server_klass=Thrift::SimpleServer)
     processor = service.thrift_processor
     transport = service.server_transport
-    
+        
     server_klass.new processor, transport
   end
   

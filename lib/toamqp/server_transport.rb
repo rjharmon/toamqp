@@ -4,10 +4,11 @@
 class TOAMQP::ServerTransport
   # The queue this server serves.
   #
-  attr_reader :queue
+  attr_reader :topology
 
-  def initialize(queue)
-    @queue = queue
+  def initialize(topology)
+    @topology = topology
+    @queue    = topology.queue
   end
   
   # Returns true if there are no messages left on the queue. Mostly used for
@@ -26,7 +27,7 @@ class TOAMQP::ServerTransport
   # used for communication with that client. 
   #
   def accept
-    queue.subscribe do |message|
+    @queue.subscribe do |message|
       packet = message[:payload]
 
       return TOAMQP::Transport.new(
@@ -37,5 +38,6 @@ class TOAMQP::ServerTransport
   # Closes all connections
   #
   def close
+    @topology.destroy
   end
 end

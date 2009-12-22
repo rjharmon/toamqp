@@ -3,14 +3,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp'
 
 describe TOAMQP::ServerTransport do
-  attr_reader :transport, :queue
+  attr_reader :transport, :topology, :queue
   before(:each) do
     @queue = flexmock(:queue)
-    
+    @topology = flexmock(:topology)
+
+    topology.should_receive(
+      :queue => queue, 
+      :destroy => nil).by_default
+      
     queue.should_receive(
       :message_count => 0).by_default 
     
-    @transport = TOAMQP::ServerTransport.new(queue)
+    @transport = TOAMQP::ServerTransport.new(topology)
   end
   
   describe "#eof?" do

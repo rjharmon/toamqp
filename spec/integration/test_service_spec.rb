@@ -32,7 +32,14 @@ describe "Server of test service" do
     serves Test
     exchange :test
     
+    def initialize(spool)
+      super()
+      
+      @spool = spool
+    end
+    
     def announce(msg)
+      @spool << msg
     end
     def add(a,b)
       a+b
@@ -40,8 +47,10 @@ describe "Server of test service" do
   end
   
   attr_reader :server, :client
+  attr_reader :received_messages
   before(:each) do
-    @server = TOAMQP.server(TestService.new, SpecServer)
+    @received_messages = []
+    @server = TOAMQP.server(TestService.new(received_messages), SpecServer)
     @client = TOAMQP.client('test', Test)
   end
   
@@ -53,7 +62,6 @@ describe "Server of test service" do
       received_messages.should include('foo')
     end
     it "should return without waiting for answer (asynchronous operation)" do
-      pending 'simple case'
       client.announce('foo')
       client.announce('bar')
 
@@ -66,6 +74,7 @@ describe "Server of test service" do
           should_receive(:announce).once
         
         client.announce('foo')
+        server.serve
       end 
     end
   end
