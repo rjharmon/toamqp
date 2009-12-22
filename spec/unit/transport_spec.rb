@@ -6,6 +6,7 @@ describe TOAMQP::Transport do
   attr_reader :transport
   before(:each) do
     destination = flexmock(:destination)
+    destination.should_ignore_missing
     
     @transport = TOAMQP::Transport.new(
       :destination => destination)

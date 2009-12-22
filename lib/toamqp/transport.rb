@@ -1,5 +1,8 @@
+require 'forwardable'
 
 class TOAMQP::Transport
+  extend Forwardable
+  
   attr_reader :destination
   
   # Initializes an AMQP transport. 
@@ -12,14 +15,6 @@ class TOAMQP::Transport
     @destination = options[:destination]
   end
 
-  # Writes a buffer to the destination
-  #
-  def write(buffer)
-  end
-  
-  # Flushes destinations buffers (and will probably post to the queue, doing
-  # something and getting an answer.)
-  #
-  def flush
-  end
+  def_delegators :destination, 
+    :write, :flush
 end
