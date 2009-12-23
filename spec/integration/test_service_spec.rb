@@ -4,31 +4,6 @@ $:.unshift File.join(
   File.dirname(__FILE__), 'protocol/gen-rb')
 require 'test'
 
-class SpecServer < Thrift::BaseServer
-  def serve
-    begin
-      @server_transport.listen
-      while not @server_transport.eof?
-        client = @server_transport.accept
-        trans = @transport_factory.get_transport(client)
-        prot = @protocol_factory.get_protocol(trans)
-        begin
-          loop do
-            @processor.process(prot, prot)
-          end
-        rescue Thrift::TransportException, Thrift::ProtocolException => ex
-        ensure
-          trans.close
-        end
-      end
-    rescue => bang
-      raise bang
-    else
-      @server_transport.close
-    end
-  end
-end
-
 describe "Server of test service" do
   class TestService < TOAMQP::Service::Base
     serves Test
