@@ -15,7 +15,7 @@ describe TOAMQP::Bridge do
   describe "#protocol" do
     before(:each) do
       flexmock(bridge, 
-        :source => flexmock(:source), 
+        :source => flexmock(:source, 'queue.name' => 'private_queue'), 
         :destination => flexmock(:destination))
     end
     def call
@@ -29,7 +29,7 @@ describe TOAMQP::Bridge do
   describe "#transport" do
     before(:each) do
       flexmock(bridge, 
-        :source => flexmock(:source), 
+        :source => flexmock(:source, 'queue.name' => 'private_queue'), 
         :destination => flexmock(:destination))
     end
     def call

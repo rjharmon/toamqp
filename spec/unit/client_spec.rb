@@ -14,7 +14,7 @@ describe "TOAMQP::Client" do
     before(:each) do
       @connection = flexmock(:connection, 
         :exchange => flexmock(:exchange), 
-        :queue    => flexmock(:queue))
+        :queue    => flexmock(:queue, :name => 'private_queue'))
     end
     
     def call

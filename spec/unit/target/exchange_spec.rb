@@ -29,7 +29,7 @@ describe TOAMQP::Target::Exchange do
       end
 
       it "should publish the buffered message to the exchange" do
-        exchange.should_receive(:publish).with('some message').once
+        exchange.should_receive(:publish).with('some message', Hash).once
 
         target.flush
       end 

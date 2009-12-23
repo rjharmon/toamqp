@@ -27,17 +27,20 @@ class TOAMQP::Bridge
   # requested.
   #
   def transport
+    reply_to = source()
+    reply_to_queue = reply_to.queue.name
+    
     TOAMQP::Transport.new(
-      :source      => source,
-      :destination => destination)
+      :source      => reply_to,
+      :destination => destination(:reply_to => reply_to_queue))
   end
   
   def source
     TOAMQP::Source::PrivateQueue.new(connection)
   end
   
-  def destination
+  def destination(opts={})
     exchange = connection.exchange(exchange_name)
-    TOAMQP::Target::Exchange.new(exchange)
+    TOAMQP::Target::Exchange.new(exchange, opts)
   end
 end

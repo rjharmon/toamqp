@@ -34,6 +34,8 @@ class TOAMQP::ServerTransport
       # This will only work in some rubies!
     end
     
+    pp message[:header]
+    
     packet = message[:payload]
     
     return TOAMQP::Transport.new(

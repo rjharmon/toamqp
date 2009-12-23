@@ -8,9 +8,16 @@ module TOAMQP::Target
   class Exchange  
     attr_reader :buffer
     
-    def initialize(exchange)
+    # Initializes a target that publishes to a queue or to an exchange. 
+    # Valid options include: 
+    #
+    #   :reply_to     queue to send replies to (will be sent in headers)
+    #
+    def initialize(exchange, options={})
       @exchange = exchange
       @buffer = String.new
+      
+      @reply_to_queue = options[:reply_to]
     end
 
     def write(buffer)
@@ -18,10 +25,15 @@ module TOAMQP::Target
     end
 
     def flush
-      @exchange.publish @buffer
+      headers = {}
+
+      # TODO: Make this comply to the SOA recommendation (23Dez09, ksc)
+      headers['reply_to'] = @reply_to_queue if @reply_to_queue
+      
+      @exchange.publish @buffer, 
+        :headers => headers
 
       @buffer = ''
-      nil
     end
   end
 end
