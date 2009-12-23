@@ -22,23 +22,22 @@ class TOAMQP::Bridge
   end
   
   # Creates and returns a Thrift transport instance that will transport its
-  # messages via AMQP to the exchange. 
+  # messages via AMQP to the exchange. The transport also creates an anonymous
+  # return queue that will be used when bidirectional communication is
+  # requested.
   #
   def transport
-    # client_source = Source::Queue.new(private_queue_name)
-    # filtered_source = Source::BoundQueue.new(exchange_name, filter_queue_name(:filter => :yes))
-    # broadcast_source = Source::BoundQueue.new(exchange_name, private_queue_name)
-    # private_server_source = Source::Queue.new(private_queue_name)
-    # 
-    # client_dest = Target::Exchange.new(exchange_name)
-    # client_dest2 = Target::Queue.new(private_queue_name)
-    # 
-    # server_dest = Target::Queue.new(reply_queue_name)
-    
-    exchange = connection.exchange(exchange_name)
-    
-    destination = TOAMQP::Target::Exchange.new(exchange)
     TOAMQP::Transport.new(
+      :source      => source,
       :destination => destination)
+  end
+  
+  def source
+    TOAMQP::Source::PrivateQueue.new(connection)
+  end
+  
+  def destination
+    exchange = connection.exchange(exchange_name)
+    TOAMQP::Target::Exchange.new(exchange)
   end
 end

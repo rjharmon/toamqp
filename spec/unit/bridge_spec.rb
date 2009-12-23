@@ -3,17 +3,21 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp'
 
 describe TOAMQP::Bridge do
-  attr_reader :connection
+  attr_reader :connection, :bridge
   before(:each) do
     @connection = flexmock(:connection, 
-      :exchange => flexmock(:exchange))
-  end
-  
-  def bridge
-    TOAMQP::Bridge.new(connection, 'exchange_name')
+      :exchange => flexmock(:exchange), 
+      :queue    => flexmock(:queue))
+      
+    @bridge = TOAMQP::Bridge.new(connection, 'exchange_name')
   end
   
   describe "#protocol" do
+    before(:each) do
+      flexmock(bridge, 
+        :source => flexmock(:source), 
+        :destination => flexmock(:destination))
+    end
     def call
       bridge.protocol
     end
@@ -23,6 +27,11 @@ describe TOAMQP::Bridge do
     end 
   end
   describe "#transport" do
+    before(:each) do
+      flexmock(bridge, 
+        :source => flexmock(:source), 
+        :destination => flexmock(:destination))
+    end
     def call
       bridge.transport
     end
@@ -30,5 +39,15 @@ describe TOAMQP::Bridge do
     it "should return a Transport" do
       call.should be_an_instance_of(TOAMQP::Transport)
     end 
+  end
+  describe "#source" do
+    it "should return a TOAMQP::Source::PrivateQueue" do
+      bridge.source.should be_an_instance_of(TOAMQP::Source::PrivateQueue)
+    end 
+  end
+  describe "#destination" do
+    it "should return a TOAMQP::Target::Exchange" do
+      bridge.destination.should be_an_instance_of(TOAMQP::Target::Exchange)
+    end
   end
 end

@@ -13,7 +13,8 @@ describe "TOAMQP::Client" do
     attr_reader :connection
     before(:each) do
       @connection = flexmock(:connection, 
-        :exchange => flexmock(:exchange))
+        :exchange => flexmock(:exchange), 
+        :queue    => flexmock(:queue))
     end
     
     def call

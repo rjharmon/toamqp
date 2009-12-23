@@ -5,6 +5,9 @@ $:.unshift File.join(
 require 'test'
 
 describe "Server of test service" do
+  # Define a small service that allows inspection of the service methods. 
+  # This is used in all the following tests. See also protocol/test.thrift
+  #
   class TestService < TOAMQP::Service::Base
     serves Test
     exchange :test
@@ -26,8 +29,11 @@ describe "Server of test service" do
   attr_reader :server, :client, :handler
   attr_reader :received_messages
   before(:each) do
+    # A buffer for messages sent to #announce
     @received_messages = []
+    
     @handler = TestService.new(received_messages)
+    
     @server = TOAMQP.server(@handler, SpecServer)
     @client = TOAMQP.client('test', Test)
   end
@@ -73,11 +79,12 @@ describe "Server of test service" do
   context "twoway #add" do
     context "call with (13, 29)" do
       def call
-        client.add(13, 29)
+        timeout(0.5) do
+          client.add(13, 29)
+        end
       end
 
       it "should return 42" do
-        pending 'simple case'
         call.should == 42
       end 
     end

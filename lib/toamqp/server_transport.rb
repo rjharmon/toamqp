@@ -31,6 +31,7 @@ class TOAMQP::ServerTransport
     message = nil
     @queue.subscribe(:message_max => 1, :ack => true) do |message|      
       # DON'T return from here, it will hit a bug in Bunny
+      # This will only work in some rubies!
     end
     
     packet = message[:payload]
