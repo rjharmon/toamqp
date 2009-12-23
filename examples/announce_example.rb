@@ -1,4 +1,9 @@
 
-# Illustrates how to access an asynchronous oneway service
-announcer = TOAMQP::Client.new('test', Test)
-announcer.announce('chunky bacon')
+require 'common'
+
+announcer = TOAMQP.client('service', Test)
+
+msg = "Message from #{Time.now}"
+puts "Announcing: #{msg}"
+
+announcer.announce(msg)   # will return instantly, result is printed on the server

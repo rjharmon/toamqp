@@ -35,6 +35,16 @@ class TOAMQP::Service::Base
       @exchange_name = name
     end
     
+    # Tells the user that he should use
+    #
+    #   serves THRIFT_MODULE
+    #
+    # in his service class.
+    #
+    def thrift_module
+      raise "No thrift module defined. Did you include 'serves THRIFT_MODULE'?"
+    end
+    
     def serves(thrift_module)
       # Thanks, _why!
       meta_def :thrift_module do

@@ -11,7 +11,7 @@ class TOAMQP::Bridge
   #
   def initialize(connection, exchange_name)
     @connection = connection
-    @exchange_name = exchange_name
+    @exchange_name = exchange_name.to_s
   end
   
   # Creates and returns a Thrift::BinaryProtocol instance that is connected

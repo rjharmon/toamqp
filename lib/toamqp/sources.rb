@@ -23,7 +23,7 @@ module TOAMQP::Source
     def initialize(connection)
       @connection = connection
       
-      @queue = connection.queue(:exclusive => true)
+      @queue = connection.queue()
       @message = nil
     end
     

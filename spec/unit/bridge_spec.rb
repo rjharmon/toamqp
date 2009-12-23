@@ -12,6 +12,11 @@ describe TOAMQP::Bridge do
     @bridge = TOAMQP::Bridge.new(connection, 'exchange_name')
   end
   
+  describe "#exchange_name" do
+    it "should always be converted to a string" do
+      TOAMQP::Bridge.new(connection, :exchange_name).exchange_name.should == 'exchange_name'
+    end 
+  end
   describe "#protocol" do
     before(:each) do
       flexmock(bridge, 
