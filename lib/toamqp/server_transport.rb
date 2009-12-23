@@ -34,12 +34,22 @@ class TOAMQP::ServerTransport
       # This will only work in some rubies!
     end
     
-    pp message[:header]
-    
     packet = message[:payload]
     
-    return TOAMQP::Transport.new(
-      :source => TOAMQP::Source::Packet.new(packet))
+    transport_config = {
+      :source => TOAMQP::Source::Packet.new(packet)
+    }
+    
+    # Has the client specified a reply_to queue?
+    if reply_to= message[:header].headers[:reply_to]
+      connection = TOAMQP.spawn_connection
+      queue      = connection.queue(reply_to)
+      
+      transport_config.update(
+        :destination => TOAMQP::Target::Generic.new(queue))
+    end
+    
+    return TOAMQP::Transport.new(transport_config)
   end
 
   # Closes all connections

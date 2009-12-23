@@ -2,14 +2,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require 'toamqp'
 
-describe TOAMQP::Target::Exchange do
+describe TOAMQP::Target::Generic do
   attr_reader :target, :exchange
   before(:each) do
     @exchange = flexmock(:exchange)
     
     exchange.should_ignore_missing
     
-    @target = TOAMQP::Target::Exchange.new(exchange)
+    @target = TOAMQP::Target::Generic.new(exchange)
   end
   
   describe "#write(buffer)" do

@@ -36,4 +36,4 @@ class EscapedOut < StringIO
     truncate 0
   end
 end
-$stdout = EscapedOut.new($stdout)
+# $stdout = EscapedOut.new($stdout)

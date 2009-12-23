@@ -41,6 +41,6 @@ class TOAMQP::Bridge
   
   def destination(opts={})
     exchange = connection.exchange(exchange_name)
-    TOAMQP::Target::Exchange.new(exchange, opts)
+    TOAMQP::Target::Generic.new(exchange, opts)
   end
 end

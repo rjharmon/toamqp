@@ -46,8 +46,8 @@ describe TOAMQP::Bridge do
     end 
   end
   describe "#destination" do
-    it "should return a TOAMQP::Target::Exchange" do
-      bridge.destination.should be_an_instance_of(TOAMQP::Target::Exchange)
+    it "should return a TOAMQP::Target::Generic" do
+      bridge.destination.should be_an_instance_of(TOAMQP::Target::Generic)
     end
   end
 end

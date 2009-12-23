@@ -26,8 +26,35 @@ class SpecServer < Thrift::BaseServer
       end
     rescue => bang
       raise bang
-    else
-      @server_transport.close
+    end
+  end
+  
+  def close
+    @server_transport.close
+  end
+  
+  def serve_in_thread
+    @stop_requested = false
+    @stopped_cv = ConditionVariable.new
+    @stopped_mx = Mutex.new
+    
+    thread = Thread.start do
+      while !@stop_requested
+        serve
+      end
+      
+      @stopped_mx.synchronize do
+        @stopped_cv.signal
+      end
+    end
+    thread.abort_on_exception = true
+  end
+  
+  def stop_and_join
+    @stop_requested = true
+    
+    @stopped_mx.synchronize do
+      @stopped_cv.wait(@stopped_mx)
     end
   end
 end

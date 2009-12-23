@@ -42,7 +42,8 @@ describe TOAMQP::ServerTransport do
       before(:each) do
         queue.
           should_receive(:subscribe).and_yield(
-            :payload => 'buffer'
+            :payload => 'buffer', 
+            :header => flexmock(:headers => {:reply_to => 'some_private_queue'})
           )
       end
       def call
@@ -56,7 +57,6 @@ describe TOAMQP::ServerTransport do
         call.source.should_not be_nil
       end
       it "should have a destination" do
-        pending "bidirectional comm"
         call.destination.should_not be_nil
       end
     end

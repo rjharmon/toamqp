@@ -5,7 +5,7 @@
 module TOAMQP::Target
   # Writes to an exchange.
   #
-  class Exchange  
+  class Generic  
     attr_reader :buffer
     
     # Initializes a target that publishes to a queue or to an exchange. 
@@ -29,7 +29,7 @@ module TOAMQP::Target
 
       # TODO: Make this comply to the SOA recommendation (23Dez09, ksc)
       headers['reply_to'] = @reply_to_queue if @reply_to_queue
-      
+                  
       @exchange.publish @buffer, 
         :headers => headers
 
