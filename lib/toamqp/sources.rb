@@ -23,7 +23,8 @@ module TOAMQP::Source
     def initialize(connection)
       @connection = connection
       
-      @queue = connection.queue()
+      @name  = "toamqp-private-#{TOAMQP.uuid_generator.generate}"
+      @queue = connection.queue(@name, :auto_delete => true)
       @message = nil
     end
     

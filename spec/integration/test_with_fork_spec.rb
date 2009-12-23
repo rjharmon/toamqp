@@ -27,9 +27,9 @@ describe "Forked client with a test server" do
         client.add(1,2).should == 3
       end
     ensure
-      Process.kill('TERM', child_pid) rescue nil
+      Process.kill('KILL', @child_pid) rescue nil
     end
     
-    Process.wait(@child_pid) rescue nil
+    Process.waitall
   end 
 end

@@ -29,7 +29,8 @@ module TOAMQP::Target
 
       # TODO: Make this comply to the SOA recommendation (23Dez09, ksc)
       headers['reply_to'] = @reply_to_queue if @reply_to_queue
-                  
+      
+      # pp [:flush, @buffer]            
       @exchange.publish @buffer, 
         :headers => headers
 

@@ -15,6 +15,18 @@ module TOAMQP;
     client_class.new(amqp_bridge.protocol)
   end
   
+  # Returns a new server that serves +service+.
+  #
+  # Example:
+  #
+  #   class MyService < TOAMQP::Service::Base
+  #     serves Service    # the module that contains thrift classes
+  #     exchange :service
+  #   end
+  #
+  #   # Launches the server (a simple one) in one line
+  #   TOAMQP.server(MyService.new).serve
+  #
   def server(service, server_klass=Thrift::SimpleServer)
     processor = service.thrift_processor
     transport = service.server_transport
@@ -25,6 +37,7 @@ module TOAMQP;
   module_function :server, :client
 end
 
+require 'toamqp/uuid_generator'
 require 'toamqp/service/base'
 require 'toamqp/connection_manager'
 
