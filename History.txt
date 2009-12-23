@@ -1,3 +1,14 @@
+=== 0.3
+
+* Complete rewrite: Code is now much more structured and the specs reflect 
+  intent better. 
+  
+* New API - more rails like, less configuration to remember. 
+
+* SLOW: Tops at about 100 messages per second. This limitation can be much 
+  improved upon by creating less connections and creating connections more 
+  cleverly.
+
 === 0.2
 
 * New API that allows clearly expressing intent.
