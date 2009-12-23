@@ -96,5 +96,11 @@ describe "Server of test service" do
         call.should == 42
       end 
     end
+    it "should allow multiple calls" do
+      timeout(0.5) do
+        client.add 1,2
+        client.add 1,3
+      end
+    end
   end    
 end
