@@ -1,8 +1,9 @@
 
-# Illustrates how to access a twoway service
-adder = TOAMQP::Client.new('test', Test)
+require 'common'
 
-a,b,(*) = ARGV.map { |arg| arg.to_i }
-puts "Adding #{a} and #{b}"
-result = adder.add(a,b)
+adder = TOAMQP.client('adder', Test)
+
+puts "Adding 13 and 29"
+result = adder.add(13, 29)
+
 puts "Result: #{result}"
