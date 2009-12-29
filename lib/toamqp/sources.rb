@@ -24,7 +24,7 @@ module TOAMQP::Source
       @connection = connection
       
       @name  = "toamqp-private-#{TOAMQP.uuid_generator.generate}"
-      @queue = connection.queue(@name, :auto_delete => true)
+      @queue = connection.queue(@name)
       @message = nil
     end
     

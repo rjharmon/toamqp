@@ -33,7 +33,7 @@ spec = Gem::Specification.new do |s|
   
   # Change these as appropriate
   s.name              = "toamqp"
-  s.version           = "0.1.0"
+  s.version           = "0.3.0"
   s.summary           = "Allows thrift RPC via an AMQP broker"
   s.author            = "Kaspar Schiess"
   s.email             = "kaspar.schiess@absurd.li"
@@ -44,7 +44,11 @@ spec = Gem::Specification.new do |s|
   s.rdoc_options      = %w(--main README.textile)
 
   # Add any extra files to include in the gem
-  s.files             = %w(connection.yml connection.yml.template History.txt Manifest.txt Rakefile README.textile) + 
+  s.files             = %w(
+    connection.yml.template 
+    History.txt 
+    Rakefile 
+    README.textile ) + 
     Dir.glob("{spec,lib}/**/*")
    
   s.require_paths     = ["lib"]
@@ -86,4 +90,4 @@ task :clean => [:clobber_rdoc, :clobber_package] do
   rm "#{spec.name}.gemspec"
 end
 
-# End of Rake
+# End of Rake ----------------------------------------------------------------
