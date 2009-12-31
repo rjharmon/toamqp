@@ -24,7 +24,9 @@ module TOAMQP::Source
       @connection = connection
       
       @name  = "toamqp-private-#{TOAMQP.uuid_generator.generate}"
-      @queue = connection.queue(@name)
+      @queue = connection.queue(@name, 
+        :exclusive => true,     # Only this process may consume the queue
+        :auto_delete => true)   # Delete when the channel closes
       @message = nil
     end
     
@@ -46,12 +48,13 @@ module TOAMQP::Source
       # TODO: This looks like we could introduce another layer just above
       # bunny... 23Dez09, ksc
       message = nil
-      @queue.subscribe(:message_max => 1, :ack => true) do |message|
-        # Don't return from here, bug in bunny!
-        # This will only work in some rubies!
-      end
       
-      @message = StringIO.new(message[:payload])
+      while not message_buffered?
+        message = @queue.pop
+        payload = message[:payload]
+        
+        @message = StringIO.new(payload) unless payload == :queue_empty
+      end
     end
     
   end

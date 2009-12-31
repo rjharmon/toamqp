@@ -5,6 +5,8 @@ $:.unshift File.join(
 require 'test'
 
 describe "Server of test service" do
+  TIMEOUT = 1
+  
   # Define a small service that allows inspection of the service methods. 
   # This is used in all the following tests. See also protocol/test.thrift
   #
@@ -87,7 +89,7 @@ describe "Server of test service" do
     
     context "call with (13, 29)" do
       def call
-        timeout(0.5) do
+        timeout(TIMEOUT) do
           client.add(13, 29)
         end
       end
@@ -97,7 +99,7 @@ describe "Server of test service" do
       end 
     end
     it "should allow multiple calls" do
-      timeout(0.5) do
+      timeout(TIMEOUT) do
         client.add 1,2
         client.add 1,3
       end
