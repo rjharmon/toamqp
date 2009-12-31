@@ -17,6 +17,13 @@ describe TOAMQP::Source::PrivateQueue do
         raise WouldBlock
       end
     end
+    def pop
+      if messages && msg=messages.shift
+        return { :payload => msg }
+      else
+        return { :payload => :queue_empty }
+      end
+    end
   end
   
   attr_reader :queue
@@ -37,11 +44,6 @@ describe TOAMQP::Source::PrivateQueue do
     end
   end
   describe "#read" do
-    it "should block on subscribe until a message arrives" do
-      lambda {
-        private_queue.read(1)
-      }.should raise_error(QueueStub::WouldBlock)
-    end
     context "when a message is posted" do
       before(:each) do
         queue.messages = %w(buffer)
@@ -53,17 +55,15 @@ describe TOAMQP::Source::PrivateQueue do
       it "should allow reading too much" do
         private_queue.read(1000).should == 'buffer'
       end
-      context "and it has been read completely" do
-        before(:each) do
-          private_queue.read(1000)
-        end
-
-        it "should block for a new message" do
-          lambda {
-            private_queue.read(1)
-          }.should raise_error(QueueStub::WouldBlock)
-        end
+    end
+    context "when queue is initially empty" do
+      before(:each) do
+        queue.messages = [:queue_empty, 'message']
       end
+      
+      it "should read 'message'" do
+        private_queue.read(1000).should == 'message'
+      end 
     end
   end
 end
