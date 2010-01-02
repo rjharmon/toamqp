@@ -4,14 +4,18 @@ h1. Thrift AMQP transport
 
 h2. DESCRIPTION
 
-Transports thrift messages over a the advanced message queue protocol. (AMQP)
-Because of the unconnected broadcasting nature of the message queue, this 
-transport supports only one-way communication. 
+Transports "thrift":http://incubator.apache.org/thrift/ messages via an "AMQP broker":http://www.amqp.org.
 
-The usage scenario is that you would use this to broadcast information about 
-services (1 producer, n consumers) and then create point to point connections 
-from client to service using normal (TCP) thrift. You gain the advantage of
-using only one interface definition language (IDL). 
+Advantages: ("see also":http://www.openamq.org/doc:amqp-background)
+
+* *Less Network Load* You don't open as many TCP connections (one instead of one per service)
+
+* *Simplicity* One well known service point (your broker) instead of many IP/port pairs to know for clients
+
+* *Persistence* Messages wont get lost if you don't want them to.
+
+* *Safe IPC* Since the AMQP broker implements a queue, you can avoid doing so on your end. No mucking around with Threads and Queues.
+
 
 h2. SYNOPSIS
 
