@@ -67,8 +67,7 @@ Just type
   $ sudo gem install toamqp
 </code></pre>
 
-to install the library. Note that you also need a working AMQP broker and 
-the thrift library. These must be installed manually.
+to install the library. Note that you also need a working AMQP broker and the thrift library. These must be installed manually.
 
 h2. SPECIFICATION
 
@@ -78,10 +77,7 @@ To run the specs, just type
   $ rake specs
 </code></pre>
   
-Integration tests need a AMQP-Server to run on localhost. This has so far only
-been tested with RabbitMQ. (http://www.rabbitmq.com/) Alternatively, you may
-specify the location of your AMQP-Server by filling in connection.yml in the
-project's root.
+Integration tests need a AMQP-Server to run on localhost. This has so far only been tested with RabbitMQ. (http://www.rabbitmq.com/) Alternatively, you may specify the location of your AMQP-Server by filling in connection.yml in the project's root.
 
 <pre><code>
   $ rake thrift
