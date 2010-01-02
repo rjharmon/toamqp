@@ -14,7 +14,7 @@ module TOAMQP::Target
       @exchange = exchange
       @buffer = String.new
       
-      @headers  = TOAMQP::Util.stringify_keys headers
+      @headers  = TOAMQP::Util.stringify_hash headers
     end
 
     def write(buffer)
@@ -22,8 +22,8 @@ module TOAMQP::Target
     end
 
     def flush
-      require 'pp'
-      pp [:flush, @buffer, headers]            
+      # require 'pp'
+      # pp [:flush, @buffer, headers]            
 
       @exchange.publish @buffer, 
         :headers => headers

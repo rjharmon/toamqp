@@ -3,11 +3,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp'
 
 describe TOAMQP::Bridge do
-  attr_reader :connection, :bridge
+  attr_reader :connection, :exchange
+  attr_reader :bridge
   before(:each) do
-    @connection = flexmock(:connection, 
+    @connection = flexmock(:connection)
+    @exchange   = flexmock(:exchange)
+    @queue      = flexmock(:queue)
+    
+    connection.should_receive(
       :exchange => flexmock(:exchange), 
-      :queue    => flexmock(:queue))
+      :queue    => flexmock(:queue)).by_default
       
     @bridge = TOAMQP::Bridge.new(connection, 'exchange_name', {})
   end
@@ -53,13 +58,26 @@ describe TOAMQP::Bridge do
   describe "#destination" do
     attr_reader :destination
     before(:each) do
-      @destination = bridge.destination
+      @destination = bridge.destination('reply_queue')
     end
     it "should return a TOAMQP::Target::Generic" do
       destination.should be_an_instance_of(TOAMQP::Target::Generic)
     end
     it "should have a reply_to queue name in headers" do
-      destination.headers.should have_key('reply_to')
+      destination.headers.keys.should include("reply_to")
+    end 
+  end
+  
+  context "when constructed with additional headers to send" do
+    before(:each) do
+      @bridge = TOAMQP::Bridge.new(connection, 'exchange_name', { :foo => :bar })
+    end
+    
+    it "should construct the exchange to be a headers exchange" do
+      connection.should_receive(:exchange).
+        with('exchange_name', :type => :headers).and_return(exchange)
+        
+      bridge.destination('test')
     end 
   end
 end

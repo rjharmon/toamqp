@@ -59,7 +59,10 @@ class TOAMQP::Service::Base
     def topology
       connection = TOAMQP.spawn_connection
 
-      TOAMQP::Topology.new(connection, @exchange_name, @topology_options)
+      TOAMQP::Topology.new(
+        connection, 
+        @exchange_name, 
+        @topology_options || {})
     end
   end
 end

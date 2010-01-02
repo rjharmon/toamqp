@@ -4,7 +4,7 @@ require 'toamqp/transport'
 # Bridges thrift to AMQP. 
 #
 class TOAMQP::Bridge
-  attr_reader :connection, :exchange_name
+  attr_reader :connection, :exchange_name, :headers
   
   # Creates a bridge instance that will use the given +connection+ and send
   # outgoing messages to the service listening to +exchange_name+. 
@@ -33,15 +33,18 @@ class TOAMQP::Bridge
     
     TOAMQP::Transport.new(
       :source      => reply_to,
-      :destination => destination(:reply_to => reply_to_queue))
+      :destination => destination(reply_to_queue))
   end
   
   def source
     TOAMQP::Source::PrivateQueue.new(connection)
   end
   
-  def destination(opts={})
-    exchange = connection.exchange(exchange_name)
-    TOAMQP::Target::Generic.new(exchange, opts)
+  def destination(reply_to_queue_name)
+    exchange_type = headers.empty? ? :direct : :headers
+    exchange = connection.exchange(exchange_name, :type => exchange_type)
+    
+    TOAMQP::Target::Generic.new(exchange, 
+      headers.merge(:reply_to => reply_to_queue_name))
   end
 end

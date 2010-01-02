@@ -37,7 +37,7 @@ class TOAMQP::Topology
   end
   
   def produce_exchange
-    exchange_type = match_headers? ? :headers : :fanout
+    exchange_type = match_headers? ? :headers : :direct
     connection.exchange(exchange_name, :type => exchange_type)
     
   rescue Bunny::ForcedChannelCloseError, Bunny::ForcedConnectionCloseError

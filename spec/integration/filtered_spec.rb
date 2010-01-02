@@ -12,7 +12,7 @@ describe "Filtered server" do
   #
   class FilteredTestService < TOAMQP::Service::Base
     serves Test
-    exchange :test, :foo => :bar
+    exchange :test_filtered, :match => { :foo => :bar }
     
     def initialize(spool)
       super()
@@ -32,7 +32,7 @@ describe "Filtered server" do
   
   context "when sent messages with :foo => :bar" do
     before(:each) do
-      client = TOAMQP.client(:test, Test, :header => { :foo => :bar })
+      client = TOAMQP.client(:test_filtered, Test, :header => { :foo => :bar })
       client.announce('message')
       
       server.serve
@@ -43,7 +43,7 @@ describe "Filtered server" do
   end
   context "when sent messages with :foo => :baz" do
     before(:each) do
-      client = TOAMQP.client(:test, Test, :header => { :foo => :baz })
+      client = TOAMQP.client(:test_filtered, Test, :header => { :foo => :baz })
       client.announce('message')
 
       server.serve
