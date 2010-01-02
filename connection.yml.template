@@ -1,5 +1,0 @@
-connection: 
-  host: mq.mydomain.com
-  vhost: /my_vhost
-  user: test_thrift_amqp
-  password: SECRET

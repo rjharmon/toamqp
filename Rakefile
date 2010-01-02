@@ -45,11 +45,10 @@ spec = Gem::Specification.new do |s|
 
   # Add any extra files to include in the gem
   s.files             = %w(
-    connection.yml.template 
     History.txt 
     Rakefile 
     README.textile ) + 
-    Dir.glob("{spec,lib}/**/*")
+    Dir.glob("{spec,lib,examples}/**/*")
    
   s.require_paths     = ["lib"]
   
