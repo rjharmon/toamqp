@@ -38,6 +38,7 @@ spec = Gem::Specification.new do |s|
   s.author            = "Kaspar Schiess"
   s.email             = "kaspar.schiess@absurd.li"
   s.homepage          = "http://blog.absurd.li"
+  s.description       = %Q{Transports thrift RPC calls via an AMQP broker.}
 
   s.has_rdoc          = false
   s.extra_rdoc_files  = %w(README.textile)
