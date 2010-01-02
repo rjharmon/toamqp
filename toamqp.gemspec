@@ -24,17 +24,20 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<bunny>, ["~> 0.6.0"])
       s.add_runtime_dependency(%q<uuid>, ["~> 2.0.2"])
+      s.add_runtime_dependency(%q<metaid>, ["~> 1.0.0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<flexmock>, [">= 0"])
     else
       s.add_dependency(%q<bunny>, ["~> 0.6.0"])
       s.add_dependency(%q<uuid>, ["~> 2.0.2"])
+      s.add_dependency(%q<metaid>, ["~> 1.0.0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<flexmock>, [">= 0"])
     end
   else
     s.add_dependency(%q<bunny>, ["~> 0.6.0"])
     s.add_dependency(%q<uuid>, ["~> 2.0.2"])
+    s.add_dependency(%q<metaid>, ["~> 1.0.0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<flexmock>, [">= 0"])
   end

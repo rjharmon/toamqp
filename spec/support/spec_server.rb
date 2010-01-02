@@ -11,6 +11,12 @@ class SpecServer < Thrift::BaseServer
   def serve
     begin
       @server_transport.listen
+      
+      # Wait for messages to arrive at the queue
+      if @server_transport.eof?
+        sleep 0.01
+      end
+      
       while not @server_transport.eof?
         client = @server_transport.accept
         trans = @transport_factory.get_transport(client)

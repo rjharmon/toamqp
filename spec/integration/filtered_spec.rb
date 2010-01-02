@@ -29,12 +29,19 @@ describe "Filtered server" do
     @received = []
     @server = TOAMQP.server(FilteredTestService.new(received), SpecServer)
   end
+  after(:each) do
+    Bunny.run do |mq|
+      queue = mq.queue('test_filtered')
+      queue.pop while queue.message_count > 0
+      queue.delete
+    end
+  end
   
   context "when sent messages with :foo => :bar" do
     before(:each) do
       client = TOAMQP.client(:test_filtered, Test, :header => { :foo => :bar })
       client.announce('message')
-      
+
       server.serve
     end
     it "should receive the message" do
