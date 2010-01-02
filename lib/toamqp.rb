@@ -49,6 +49,11 @@ module TOAMQP;
   end
   
   module_function :server, :client
+  
+  # Raised when the server cannot create its service exchange. 
+  # Maybe you've already created the exchange with another kind of service?
+  #
+  class CantCreateExchange < Exception; end
 end
 
 require 'toamqp/util'

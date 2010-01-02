@@ -3,7 +3,7 @@
 # Creates queues and exchanges and the connections between them, based on 
 # what the user specifies.
 class TOAMQP::Topology
-  
+    
   # The connection that underlies this topology.
   #
   attr_reader :connection
@@ -39,6 +39,10 @@ class TOAMQP::Topology
   def produce_exchange
     exchange_type = match_headers? ? :headers : :fanout
     connection.exchange(exchange_name, :type => exchange_type)
+    
+  rescue Bunny::ForcedChannelCloseError, Bunny::ForcedConnectionCloseError
+    raise TOAMQP::CantCreateExchange, 
+      "Maybe exchange '#{exchange_name}' already exists and is of a different type than #{exchange_type.inspect} ?"
   end
   def produce_queue
     queue = connection.queue(exchange_name)

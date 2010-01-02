@@ -20,6 +20,17 @@ describe TOAMQP::Topology do
     @topology = TOAMQP::Topology.new(connection, 'exchange_name')
   end
 
+  describe "#exchange" do
+    context "if the creation of the exchange fails" do
+      it "should raise a TOAMQP::CantCreateExchange exception" do
+        connection.should_receive(:exchange).and_raise(Bunny::ForcedConnectionCloseError)
+        
+        lambda {
+          topology.exchange
+        }.should raise_error(TOAMQP::CantCreateExchange)
+      end 
+    end
+  end
   describe "#queue" do
     it "should return a queue" do
       topology.queue.should == queue
