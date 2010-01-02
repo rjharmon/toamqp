@@ -31,7 +31,7 @@ class TOAMQP::Service::Base
   end
   
   class << self # CLASS METHODS
-    def exchange(name)
+    def exchange(name, opts={})
       @exchange_name = name
     end
     

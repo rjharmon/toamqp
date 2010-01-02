@@ -6,7 +6,15 @@ module TOAMQP;
   module Service; end;
   module Target; end;
   
-  def client(exchange_name, protocol_module)
+  # Returns a client for a service that is attached to +exchange_name+. The 
+  # client will use the thrift module +protocol_module+. 
+  #
+  # Example:
+  #
+  #   # Returns a client for Test
+  #   TOAMQP.client('service_name', Test)
+  #
+  def client(exchange_name, protocol_module, opts={})
     connection = TOAMQP.spawn_connection
     
     amqp_bridge = TOAMQP::Bridge.new(connection, exchange_name)
