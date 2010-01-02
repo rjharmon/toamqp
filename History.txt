@@ -1,4 +1,11 @@
-=== 0.3
+=== 0.3.1
+
+  * Releasing SpecServer as well. This should help develop clean spec
+    code when using toamqp.
+  
+  * FIX :pass / :password can now both be used
+
+=== 0.3 / 2010-01-01
 
 * Complete rewrite: Code is now much more structured and the specs reflect 
   intent better. 
