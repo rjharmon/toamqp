@@ -1,7 +1,5 @@
 h1. Thrift over AMQP (toamqp)
 
-(Currently undergoing a major transformation, see the redesign branch.)
-
 h2. DESCRIPTION
 
 Transports "thrift":http://incubator.apache.org/thrift/ messages via an "AMQP broker":http://www.amqp.org.
