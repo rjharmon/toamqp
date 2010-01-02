@@ -6,7 +6,7 @@ $:.unshift File.dirname(__FILE__) + '/support'
 require 'pp'
 require 'toamqp'
 
-require 'support/spec_server'
+require 'toamqp/spec_server'
 
 unless defined?(PROJECT_BASE)
   PROJECT_BASE = File.join(File.dirname(__FILE__), '..')
