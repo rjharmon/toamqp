@@ -33,7 +33,7 @@ spec = Gem::Specification.new do |s|
   
   # Change these as appropriate
   s.name              = "toamqp"
-  s.version           = "0.3.0"
+  s.version           = "0.3.1"
   s.summary           = "Allows thrift RPC via an AMQP broker"
   s.author            = "Kaspar Schiess"
   s.email             = "kaspar.schiess@absurd.li"
