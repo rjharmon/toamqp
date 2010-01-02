@@ -14,8 +14,7 @@ Advantages: ("see also":http://www.openamq.org/doc:amqp-background)
 
 * *Safe IPC* Since the AMQP broker implements a queue, you can avoid doing so on your end. No mucking around with Threads and Queues.
 
-This library provides the glue code between thrift and bunny (AMQP client) and
-allows easy creation of a service.
+This library provides the glue code between thrift and bunny (AMQP client) and allows easy creation of a service.
 
 h2. SYNOPSIS
 
