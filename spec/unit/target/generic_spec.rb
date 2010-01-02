@@ -9,9 +9,17 @@ describe TOAMQP::Target::Generic do
     
     exchange.should_ignore_missing
     
-    @target = TOAMQP::Target::Generic.new(exchange)
+    @target = TOAMQP::Target::Generic.new(exchange, { :foo => :bar })
   end
   
+  describe "#headers" do
+    it "should have stringified the keys" do
+      target.headers.keys.should include('foo')
+    end 
+    it "should have stringified the values" do
+      target.headers.values.should include('bar')
+    end 
+  end
   describe "#write(buffer)" do
     it "should allow writing to" do
       target.write('test')

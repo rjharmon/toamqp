@@ -9,12 +9,12 @@ describe TOAMQP::Bridge do
       :exchange => flexmock(:exchange), 
       :queue    => flexmock(:queue))
       
-    @bridge = TOAMQP::Bridge.new(connection, 'exchange_name')
+    @bridge = TOAMQP::Bridge.new(connection, 'exchange_name', {})
   end
   
   describe "#exchange_name" do
     it "should always be converted to a string" do
-      TOAMQP::Bridge.new(connection, :exchange_name).exchange_name.should == 'exchange_name'
+      TOAMQP::Bridge.new(connection, :exchange_name, {}).exchange_name.should == 'exchange_name'
     end 
   end
   describe "#protocol" do
@@ -51,8 +51,15 @@ describe TOAMQP::Bridge do
     end 
   end
   describe "#destination" do
-    it "should return a TOAMQP::Target::Generic" do
-      bridge.destination.should be_an_instance_of(TOAMQP::Target::Generic)
+    attr_reader :destination
+    before(:each) do
+      @destination = bridge.destination
     end
+    it "should return a TOAMQP::Target::Generic" do
+      destination.should be_an_instance_of(TOAMQP::Target::Generic)
+    end
+    it "should have a reply_to queue name in headers" do
+      destination.headers.should have_key('reply_to')
+    end 
   end
 end

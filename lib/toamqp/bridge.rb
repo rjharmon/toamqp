@@ -9,9 +9,10 @@ class TOAMQP::Bridge
   # Creates a bridge instance that will use the given +connection+ and send
   # outgoing messages to the service listening to +exchange_name+. 
   #
-  def initialize(connection, exchange_name)
+  def initialize(connection, exchange_name, headers)
     @connection = connection
     @exchange_name = exchange_name.to_s
+    @headers = headers.dup
   end
   
   # Creates and returns a Thrift::BinaryProtocol instance that is connected

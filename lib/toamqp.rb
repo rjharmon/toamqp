@@ -17,7 +17,13 @@ module TOAMQP;
   def client(exchange_name, protocol_module, opts={})
     connection = TOAMQP.spawn_connection
     
-    amqp_bridge = TOAMQP::Bridge.new(connection, exchange_name)
+    additional_headers = opts[:header] || {}
+    
+    amqp_bridge = TOAMQP::Bridge.new(
+      connection, 
+      exchange_name, 
+      additional_headers)
+      
     client_class = protocol_module.const_get('Client')
     
     client_class.new(amqp_bridge.protocol)

@@ -6,18 +6,15 @@ module TOAMQP::Target
   # Writes to an exchange.
   #
   class Generic  
-    attr_reader :buffer
+    attr_reader :buffer, :headers
     
     # Initializes a target that publishes to a queue or to an exchange. 
-    # Valid options include: 
     #
-    #   :reply_to     queue to send replies to (will be sent in headers)
-    #
-    def initialize(exchange, options={})
+    def initialize(exchange, headers={})
       @exchange = exchange
       @buffer = String.new
       
-      @reply_to_queue = options[:reply_to]
+      @headers  = stringify_keys headers
     end
 
     def write(buffer)
@@ -25,17 +22,19 @@ module TOAMQP::Target
     end
 
     def flush
-      headers = {}
+      require 'pp'
+      pp [:flush, @buffer, headers]            
 
-      # TODO: Make this comply to the SOA recommendation (23Dez09, ksc)
-      headers['reply_to'] = @reply_to_queue if @reply_to_queue
-            
-      # require 'pp'
-      # pp [:flush, @buffer, headers]            
       @exchange.publish @buffer, 
         :headers => headers
 
       @buffer = ''
+    end
+
+    def stringify_keys(h)
+      h.inject({}) { |h,(k,v)|
+        h[k.to_s] = v.to_s
+        h }
     end
   end
 end
