@@ -33,6 +33,7 @@ class TOAMQP::Service::Base
   class << self # CLASS METHODS
     def exchange(name, opts={})
       @exchange_name = name
+      @topology_options = opts
     end
     
     # Tells the user that he should use
@@ -58,7 +59,7 @@ class TOAMQP::Service::Base
     def topology
       connection = TOAMQP.spawn_connection
 
-      TOAMQP::Topology.new(connection, @exchange_name)
+      TOAMQP::Topology.new(connection, @exchange_name, @topology_options)
     end
   end
 end

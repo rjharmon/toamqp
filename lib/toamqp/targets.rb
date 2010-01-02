@@ -14,7 +14,7 @@ module TOAMQP::Target
       @exchange = exchange
       @buffer = String.new
       
-      @headers  = stringify_keys headers
+      @headers  = TOAMQP::Util.stringify_keys headers
     end
 
     def write(buffer)
@@ -29,12 +29,6 @@ module TOAMQP::Target
         :headers => headers
 
       @buffer = ''
-    end
-
-    def stringify_keys(h)
-      h.inject({}) { |h,(k,v)|
-        h[k.to_s] = v.to_s
-        h }
     end
   end
 end

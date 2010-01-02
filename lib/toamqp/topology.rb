@@ -12,11 +12,16 @@ class TOAMQP::Topology
   #
   attr_reader :exchange_name
   
+  # Options that were passed to the constructor
+  #
+  attr_reader :options
+  
   # Creates a new queue/exchange topology. 
   #
-  def initialize(connection, exchange_name)
+  def initialize(connection, exchange_name, options={})
     @connection = connection
     @exchange_name = exchange_name.to_s
+    @options = options
   end
   
   # Returns the queue the server listens to. 
@@ -32,12 +37,19 @@ class TOAMQP::Topology
   end
   
   def produce_exchange
-    connection.exchange(exchange_name)
+    exchange_type = match_headers? ? :headers : :fanout
+    connection.exchange(exchange_name, :type => exchange_type)
   end
   def produce_queue
     queue = connection.queue(exchange_name)
     
-    queue.bind(exchange)
+    bind_options = {}
+    if match_headers?
+      bind_options[:arguments] = {'x-match' => 'all'}.merge(
+        TOAMQP::Util.stringify_hash(options[:match]))
+    end
+    
+    queue.bind(exchange, bind_options)
     
     return queue
   end
@@ -46,5 +58,11 @@ class TOAMQP::Topology
   #
   def destroy
     connection.close
+  end
+  
+  # True if we match headers when receiving messages
+  #
+  def match_headers?
+    options.has_key? :match
   end
 end
