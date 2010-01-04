@@ -20,6 +20,13 @@ describe TOAMQP::Topology do
     @topology = TOAMQP::Topology.new(connection, 'exchange_name')
   end
 
+  describe "#produce_queue_name" do
+    it "should accept symbols in :match option (regression)" do
+      TOAMQP::Topology.new(connection, 'exchange_name', 
+        :match => {:foo => :bar, :something => :other}).
+        produce_queue_name('test').should == "test-foo_bar-something_other"
+    end 
+  end
   describe "#exchange" do
     context "if the creation of the exchange fails" do
       it "should raise a TOAMQP::CantCreateExchange exception" do

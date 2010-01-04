@@ -61,7 +61,7 @@ class TOAMQP::Topology
     if match_headers?
       # Queue names are derived from the filter attributes. We sort the keys
       # and compose the name from the exchange and the filter.
-      match_header = options[:match]
+      match_header = TOAMQP::Util.stringify_hash(options[:match])
       [
         exchange_name,
         match_header.keys.sort.map { |k| "#{k}_#{match_header[k]}" }].
