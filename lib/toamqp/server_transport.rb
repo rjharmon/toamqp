@@ -42,11 +42,11 @@ class TOAMQP::ServerTransport
     
     # Has the client specified a reply_to queue?
     if reply_to= message[:header].headers[:reply_to]
-      connection = TOAMQP.spawn_connection
-      queue      = connection.queue(reply_to)
-      
-      transport_config.update(
-        :destination => TOAMQP::Target::Generic.new(queue))
+      target = TOAMQP::Target::Generic.new(
+        topology.answer_exchange, 
+        :key => reply_to)
+        
+      transport_config.update(:destination => target)
     end
     
     return TOAMQP::Transport.new(transport_config)

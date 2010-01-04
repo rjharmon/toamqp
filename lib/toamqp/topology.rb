@@ -3,6 +3,7 @@
 # Creates queues and exchanges and the connections between them, based on 
 # what the user specifies.
 class TOAMQP::Topology
+  ANSWER_EXCHANGE_NAME = 'responses'
     
   # The connection that underlies this topology.
   #
@@ -30,10 +31,16 @@ class TOAMQP::Topology
     @queue ||= produce_queue
   end
   
-  # Returns the exchange that belongs to the service topology. 
+  # Returns the exchange that requests are posted to.
   #
   def exchange
     @exchange ||= produce_exchange
+  end
+  
+  # Returns the exchange that the server sends answers to.
+  #
+  def answer_exchange
+    @answer_exchange ||= produce_answer_exchange
   end
   
   def produce_exchange
@@ -56,6 +63,9 @@ class TOAMQP::Topology
     queue.bind(exchange, bind_options)
     
     return queue
+  end
+  def produce_answer_exchange
+    connection.exchange(ANSWER_EXCHANGE_NAME)
   end
   
   # Closes the connection and cleans up after the topology. 

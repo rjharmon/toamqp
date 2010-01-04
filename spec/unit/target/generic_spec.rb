@@ -9,9 +9,16 @@ describe TOAMQP::Target::Generic do
     
     exchange.should_ignore_missing
     
-    @target = TOAMQP::Target::Generic.new(exchange, { :foo => :bar })
+    @target = TOAMQP::Target::Generic.new(exchange, 
+      :headers => { :foo => :bar }, 
+      :key => 'thekey')
   end
   
+  describe "#key" do
+    it "should store the key option" do
+      target.key.should == 'thekey'
+    end 
+  end
   describe "#headers" do
     it "should have stringified the keys" do
       target.headers.keys.should include('foo')
@@ -37,7 +44,11 @@ describe TOAMQP::Target::Generic do
       end
 
       it "should publish the buffered message to the exchange" do
-        exchange.should_receive(:publish).with('some message', Hash).once
+        publish_options = {
+          :headers => { 'foo' => 'bar' }, 
+          :key     => 'thekey'
+        }
+        exchange.should_receive(:publish).with('some message', publish_options).once
 
         target.flush
       end 

@@ -45,6 +45,6 @@ class TOAMQP::Bridge
     exchange = connection.exchange(exchange_name, :type => exchange_type)
     
     TOAMQP::Target::Generic.new(exchange, 
-      headers.merge(:reply_to => reply_to_queue_name))
+      :headers => headers.merge(:reply_to => reply_to_queue_name))
   end
 end
