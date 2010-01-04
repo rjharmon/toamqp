@@ -42,8 +42,14 @@ class TOAMQP::ServerTransport
     
     # Has the client specified a reply_to queue?
     if reply_to= message[:header].headers[:reply_to]
+      # Opening a new connection since a threaded server will post messages
+      # to the 'responses' exchange out of band with our communication with 
+      # the broker.
+      connection = TOAMQP.spawn_connection
+      answer_exchange = connection.exchange('responses')
+
       target = TOAMQP::Target::Generic.new(
-        topology.answer_exchange, 
+        answer_exchange, 
         :key => reply_to)
         
       transport_config.update(:destination => target)

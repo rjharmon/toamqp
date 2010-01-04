@@ -3,8 +3,6 @@
 # Creates queues and exchanges and the connections between them, based on 
 # what the user specifies.
 class TOAMQP::Topology
-  ANSWER_EXCHANGE_NAME = 'responses'
-    
   # The connection that underlies this topology.
   #
   attr_reader :connection
@@ -37,12 +35,6 @@ class TOAMQP::Topology
     @exchange ||= produce_exchange
   end
   
-  # Returns the exchange that the server sends answers to.
-  #
-  def answer_exchange
-    @answer_exchange ||= produce_answer_exchange
-  end
-  
   def produce_exchange
     exchange_type = match_headers? ? :headers : :direct
     connection.exchange(exchange_name, :type => exchange_type)
@@ -64,10 +56,7 @@ class TOAMQP::Topology
     
     return queue
   end
-  def produce_answer_exchange
-    connection.exchange(ANSWER_EXCHANGE_NAME)
-  end
-  
+    
   # Closes the connection and cleans up after the topology. 
   #
   def destroy

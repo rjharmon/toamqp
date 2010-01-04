@@ -1,6 +1,9 @@
 === 0.3.1
 
-  * Releasing SpecServer as well. This should help develop clean spec
+  * Server now posts to the 'responses' exchange, as recommended by the SOA 
+    over AMQP recipe. 
+
+  * Releasing TOAMQP::SpecServer as well. This should help develop clean spec
     code when using toamqp.
   
   * FIX :pass / :password can now both be used

@@ -7,10 +7,8 @@ describe TOAMQP::ServerTransport do
   before(:each) do
     @queue = flexmock(:queue)
     @topology = flexmock(:topology)
-    answer_exchange = flexmock(:answer_exchange)
 
     topology.should_receive(
-      :answer_exchange => answer_exchange,
       :queue => queue, 
       :destroy => nil).by_default
       
