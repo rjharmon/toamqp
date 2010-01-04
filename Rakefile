@@ -56,7 +56,6 @@ spec = Gem::Specification.new do |s|
   # If you want to depend on other gems, add them here, along with any
   # relevant versions
   s.add_dependency("bunny", "~> 0.6.0")
-  s.add_dependency("uuid", "~> 2.0.2")
   s.add_dependency("metaid", "~> 1.0.0")
   
   s.add_development_dependency("rspec") 

@@ -1,7 +1,8 @@
 === 0.3.1
 
   * Server now posts to the 'responses' exchange, as recommended by the SOA 
-    over AMQP recipe. 
+    over AMQP recipe. This allows removal of the uuid dependency and probably
+    a 200% speedup in the future.
 
   * Releasing TOAMQP::SpecServer as well. This should help develop clean spec
     code when using toamqp.
