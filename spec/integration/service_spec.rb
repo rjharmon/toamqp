@@ -36,7 +36,7 @@ describe "Server of test service" do
     
     @handler = TestService.new(received_messages)
     
-    @server = TOAMQP.server(@handler, SpecServer)
+    @server = TOAMQP.server(@handler, TOAMQP::SpecServer)
     @client = TOAMQP.client('test', Test)
   end
   after(:each) do

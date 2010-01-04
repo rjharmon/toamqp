@@ -27,7 +27,7 @@ describe "Filtered server" do
   attr_reader :server, :received
   before(:each) do
     @received = []
-    @server = TOAMQP.server(FilteredTestService.new(received), SpecServer)
+    @server = TOAMQP.server(FilteredTestService.new(received), TOAMQP::SpecServer)
   end
   after(:each) do
     Bunny.run do |mq|

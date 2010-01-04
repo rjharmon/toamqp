@@ -7,7 +7,7 @@
 #   server.serve      # Work on the queued messages
 #   ...               # Verify assumptions, etc...
 #
-class SpecServer < Thrift::BaseServer
+class TOAMQP::SpecServer < Thrift::BaseServer
   def serve
     begin
       @server_transport.listen

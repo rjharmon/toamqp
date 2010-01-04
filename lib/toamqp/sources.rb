@@ -23,10 +23,15 @@ module TOAMQP::Source
     def initialize(connection)
       @connection = connection
       
-      @name  = "toamqp-private-#{TOAMQP.uuid_generator.generate}"
-      @queue = connection.queue(@name, 
+      @queue = connection.queue( 
         :exclusive => true,     # Only this process may consume the queue
         :auto_delete => true)   # Delete when the channel closes
+      
+      # Set up the binding to the responses exchange. Routing key must be
+      # the broker generated name of our queue.
+      exchange = connection.exchange('responses')
+      @queue.bind(exchange, :key => @queue.name)
+      
       @message = nil
     end
     

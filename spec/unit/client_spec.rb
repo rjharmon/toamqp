@@ -12,9 +12,13 @@ describe "TOAMQP::Client" do
   describe "#initialize" do
     attr_reader :connection
     before(:each) do
+      queue = flexmock(:queue, 
+        :name => 'private_queue',
+        :bind => nil)
+      
       @connection = flexmock(:connection, 
         :exchange => flexmock(:exchange), 
-        :queue    => flexmock(:queue, :name => 'private_queue'))
+        :queue    => queue)
     end
     
     def call

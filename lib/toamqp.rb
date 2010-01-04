@@ -57,7 +57,6 @@ module TOAMQP;
 end
 
 require 'toamqp/util'
-require 'toamqp/uuid_generator'
 require 'toamqp/service/base'
 require 'toamqp/connection_manager'
 

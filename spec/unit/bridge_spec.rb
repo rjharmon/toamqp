@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'toamqp'
 
 describe TOAMQP::Bridge do
-  attr_reader :connection, :exchange
+  attr_reader :connection, :exchange, :queue
   attr_reader :bridge
   before(:each) do
     @connection = flexmock(:connection)
@@ -11,8 +11,12 @@ describe TOAMQP::Bridge do
     @queue      = flexmock(:queue)
     
     connection.should_receive(
-      :exchange => flexmock(:exchange), 
-      :queue    => flexmock(:queue)).by_default
+      :exchange => @exchange, 
+      :queue    => @queue).by_default
+      
+    queue.should_receive(
+      :name     => 'anonymous_queue_1', 
+      :bind     => nil).by_default
       
     @bridge = TOAMQP::Bridge.new(connection, 'exchange_name', {})
   end
