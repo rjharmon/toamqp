@@ -8,6 +8,9 @@
     code when using toamqp.
   
   * FIX :pass / :password can now both be used
+  
+  * FIX Filtered queues now really work. A mixup with the queue names would
+    result in messages being sent to the wrong receiver.
 
 === 0.3 / 2010-01-01
 
