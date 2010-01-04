@@ -30,19 +30,25 @@ describe "Filtering" do
   class FilterForBazService < FilterForBaseService
     exchange :test_filtered, :match => { :foo => :baz }
   end
+
+  after(:each) do
+    Bunny.run do |mq|
+      %w{
+        test_filtered-foo_baz
+        test_filtered-foo_bar
+      }.each do |queue_name|
+        queue = mq.queue(queue_name)
+        queue.pop while queue.message_count > 0
+        queue.delete
+      end        
+    end
+  end
   
   context "using a single server" do
     attr_reader :server, :received
     before(:each) do
       @received = []
       @server = TOAMQP.server(FilterForBarService.new(received), TOAMQP::SpecServer)
-    end
-    after(:each) do
-      Bunny.run do |mq|
-        queue = mq.queue('test_filtered')
-        queue.pop while queue.message_count > 0
-        queue.delete
-      end
     end
 
     context "when sent messages with :foo => :bar" do
@@ -74,13 +80,12 @@ describe "Filtering" do
       @bar = []
       @baz = []
       
-      @bar_server = TOAMQP.server(FilterForBarService.new(bar))
-      @baz_server = TOAMQP.server(FilterForBazService.new(baz))
-      
+      @bar_server = TOAMQP.server(FilterForBarService.new(bar), TOAMQP::SpecServer)
+      @baz_server = TOAMQP.server(FilterForBazService.new(baz), TOAMQP::SpecServer)
+
       client = TOAMQP.client(:test_filtered, Test, :header => { :foo => :bar })
       client.announce('message')
-    end
-    def serve
+
       @baz_server.serve
       @bar_server.serve
     end

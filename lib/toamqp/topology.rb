@@ -44,7 +44,8 @@ class TOAMQP::Topology
       "Maybe exchange '#{exchange_name}' already exists and is of a different type than #{exchange_type.inspect} ?"
   end
   def produce_queue
-    queue = connection.queue(exchange_name)
+    queue = connection.queue(
+      produce_queue_name(exchange_name))
     
     bind_options = {}
     if match_headers?
@@ -55,6 +56,19 @@ class TOAMQP::Topology
     queue.bind(exchange, bind_options)
     
     return queue
+  end
+  def produce_queue_name(exchange_name)
+    if match_headers?
+      # Queue names are derived from the filter attributes. We sort the keys
+      # and compose the name from the exchange and the filter.
+      match_header = options[:match]
+      [
+        exchange_name,
+        match_header.keys.sort.map { |k| "#{k}_#{match_header[k]}" }].
+        flatten.join('-')
+    else
+      exchange_name
+    end
   end
     
   # Closes the connection and cleans up after the topology. 
