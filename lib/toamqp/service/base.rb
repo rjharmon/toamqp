@@ -6,10 +6,6 @@ class TOAMQP::Service::Base
   #
   attr_reader :topology
   
-  def initialize
-    @topology = self.class.topology
-  end
-
   # Returns a constant from the thrift module that was specified in the 
   # class.
   #
@@ -26,7 +22,7 @@ class TOAMQP::Service::Base
   # Returns a server transport for this service.
   #
   def server_transport
-    TOAMQP::ServerTransport.new(topology)
+    TOAMQP::ServerTransport.new(self.class.topology)
   end
   
   class << self # CLASS METHODS
