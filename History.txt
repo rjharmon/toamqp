@@ -11,6 +11,8 @@
   
   * FIX Filtered queues now really work. A mixup with the queue names would
     result in messages being sent to the wrong receiver.
+    
+  * FIX: Threading issue with multiple connections
 
 === 0.3 / 2010-01-01
 
