@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kaspar Schiess"]
-  s.date = %q{2010-01-13}
+  s.date = %q{2010-01-21}
   s.description = %q{Transports thrift RPC calls via an AMQP broker.}
   s.email = %q{kaspar.schiess@absurd.li}
   s.extra_rdoc_files = ["README.textile"]
