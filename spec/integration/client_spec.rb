@@ -32,6 +32,7 @@ describe "Client" do
   context "after #announce has been posted to the queue" do
     before(:each) do
       client.announce('test')
+      sleep 0.01    # Sometimes the AMQP server doesn't route as quickly
     end
     
     it "should have one message waiting for the server" do
