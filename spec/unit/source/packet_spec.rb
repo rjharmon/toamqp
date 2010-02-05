@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 describe TOAMQP::Source::Packet do
   attr_reader :packet, :buffer
   before(:each) do
-    @buffer = (0..100).to_a.map { |charcode| ?a + (charcode%26) }.pack('c*')
+    @buffer = (0..100).to_a.map { |charcode| ?a.ord + (charcode%26) }.pack('c*')
     @packet = TOAMQP::Source::Packet.new(buffer)
   end
   
