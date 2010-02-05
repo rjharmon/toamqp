@@ -23,17 +23,26 @@ class TOAMQP::ServerTransport
   def listen
   end
   
+  # Blocks until a message is received from the queue server. 
+  #
+  def poll_for_message
+    m = nil
+    @queue.subscribe(:message_max => 1, :ack => true) do |message|      
+      # DON'T return from here, it will hit a bug in Bunny. Subscription is 
+      # not properly canceled on return, leaving our connection half good. (Ok, 
+      # downright bad!)
+      m = message
+    end
+    
+    return m
+  end
+    
   # Blocks until a request is made. Returns the transport that should be
   # used for communication with that client. 
   #
   def accept
     # Wait for a message to arrive
-    message = nil
-    @queue.subscribe(:message_max => 1, :ack => true) do |message|      
-      # DON'T return from here, it will hit a bug in Bunny
-      # This will only work in some rubies!
-    end
-    
+    message = poll_for_message
     packet = message[:payload]
     
     transport_config = {
