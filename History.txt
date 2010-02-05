@@ -13,6 +13,8 @@
     result in messages being sent to the wrong receiver.
     
   * FIX: Threading issue with multiple connections
+  
+  * FIX: Now also works with Ruby 1.9
 
 === 0.3 / 2010-01-01
 
