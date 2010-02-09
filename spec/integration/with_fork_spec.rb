@@ -23,7 +23,7 @@ describe "Forked client with a test server" do
       
       client = TOAMQP.client(:test_forked, Test)
 
-      timeout(0.5) do # Timeout error means that communication didn't work
+      timeout(10) do # Timeout error means that communication didn't work
         client.add(1,2).should == 3
       end
     ensure
