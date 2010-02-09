@@ -38,7 +38,7 @@ spec = Gem::Specification.new do |s|
   s.author            = "Kaspar Schiess"
   s.email             = "kaspar.schiess@absurd.li"
   s.homepage          = "http://blog.absurd.li"
-  s.description       = %Q{Transports thrift RPC calls via an AMQP broker.}
+  s.description       = %Q{Transports thrift RPC calls via an AMQP broker. This is really the ruby way of using a message broker – enterprise class messaging combined with simple setup and DRY code.}
 
   s.has_rdoc          = false
   s.extra_rdoc_files  = %w(README.textile)
@@ -76,13 +76,6 @@ Rake::GemPackageTask.new(spec) do |pkg|
   # Generate the gemspec file for github.
   file = File.dirname(__FILE__) + "/#{spec.name}.gemspec"
   File.open(file, "w") {|f| f << spec.to_ruby }
-end
-
-# Generate documentation
-Rake::RDocTask.new do |rd|
-  rd.main = "README.textile"
-  rd.rdoc_files.include("README.textile", "lib/**/*.rb")
-  rd.rdoc_dir = "rdoc"
 end
 
 desc 'Clear out RDoc and generated packages'

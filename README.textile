@@ -84,6 +84,10 @@ Integration tests need a AMQP broker to run on localhost. This has so far only b
   $ rake
 </code></pre>
 
+h2. FEEDBACK
+
+Issue tracker at: http://www.github.com/kschiess/toamqp
+
 h2. LICENSE
 
 (The MIT License)
