@@ -2,6 +2,7 @@
 
 # Creates queues and exchanges and the connections between them, based on 
 # what the user specifies.
+#
 class TOAMQP::Topology
   # The connection that underlies this topology.
   #

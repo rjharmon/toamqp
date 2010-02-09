@@ -1,5 +1,12 @@
 require 'forwardable'
 
+# A thrift transport that transports from +source+ to +destination+. Source
+# and destination can be swapped out and are only delegated to. This way, 
+# they need to only implement half of the Transport interface. 
+#
+# Compatible classes for +source+ are in sources.rb, targets.rb contains 
+# all +destination+.
+#
 class TOAMQP::Transport < Thrift::BaseTransport
   extend Forwardable
   

@@ -61,13 +61,13 @@ On the client:
 
 h2. INSTALLATION
 
-Just type 
+A development machine needs a fairly recent AMQP broker (should implement the headers binding type) and the full thrift install. You need the full install  to be able to compile thrift service definitions.
+
+To install this library, just type 
 
 <pre><code>
-  $ sudo gem install toamqp
+  $ gem install toamqp
 </code></pre>
-
-to install the library. Note that you also need a working AMQP broker and the thrift library. These must be installed manually.
 
 h2. SPECIFICATION
 
@@ -77,11 +77,11 @@ To run the specs, just type
   $ rake specs
 </code></pre>
   
-Integration tests need a AMQP-Server to run on localhost. This has so far only been tested with RabbitMQ. (http://www.rabbitmq.com/) Alternatively, you may specify the location of your AMQP-Server by filling in connection.yml in the project's root.
+Integration tests need a AMQP broker to run on localhost. This has so far only been tested with RabbitMQ. (http://www.rabbitmq.com/)
 
 <pre><code>
   $ rake thrift
-  $ rake integration
+  $ rake
 </code></pre>
 
 h2. LICENSE

@@ -3,7 +3,7 @@
 # All targets for a transport.
 #
 module TOAMQP::Target
-  # Writes to an exchange.
+  # Writes to an exchange or queue.
   #
   class Generic  
     attr_reader :buffer, :headers, :key
