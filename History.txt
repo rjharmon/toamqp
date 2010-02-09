@@ -1,4 +1,4 @@
-=== 0.3.1
+=== 0.3.1 / 2010-02-09
 
   * Server now posts to the 'responses' exchange, as recommended by the SOA 
     over AMQP recipe. This allows removal of the uuid dependency and probably
