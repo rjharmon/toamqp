@@ -4,3 +4,4 @@ pkg
 spec/integration/gen-rb
 connection.yml
 rdoc
+*.gemspec
